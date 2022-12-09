@@ -1,0 +1,34 @@
+body{
+  margin: 0;
+  padding:90;
+}
+#d1{
+  display:flex;
+  text-align: center;
+  background-color: yellow;
+  margin: 0;
+}
+.t{
+  font-family: sans-serif;
+  margin: 0;
+  display:flex;
+}
+#d11{
+  display: flex;
+  margin:  2rem 0rem 2rem 4rem;
+}
+#d12{
+  display: flex;
+  margin: 2rem 0rem 2rem 3rem;
+  align-items: center;
+}
+#img1{
+  width:18rem;
+  height:12rem;
+}
+#d2{
+  margin: 2rem;
+}
+#d3{
+  margin: 2rem;
+}

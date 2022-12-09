@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="css/calcstyle.css">
+  </head>
+  <body>
+    <script src="js/calc.js"></script>
+    <table align="center">
+      <h1>Welcome!!!</h1>
+      <caption id="caption1">Calculator</caption>
+      <tr>
+        <td><input type="button" name="button" value="C" onclick="clr()"></td>
+        <td><input type="button" name="button" value="<-" onclick="bck()"></td>
+        <td colspan="2" id="inputtd"><input type="text" name="button" id="txt"></td>
+      </tr>
+      <tr>
+        <td><input type="button" name="button" value="+" onclick="dis('+')"></td>
+        <td><input type="button" name="button" value="1" onclick="dis('1')"></td>
+        <td><input type="button" name="button" value="2" onclick="dis('2')"></td>
+        <td><input type="button" name="button" value="3" onclick="dis('3')"></td>
+      </tr>
+      <tr>
+        <td><input type="button" name="button" value="-" onclick="dis('-')"></td>
+        <td><input type="button" name="button" value="4" onclick="dis('4')"></td>
+        <td><input type="button" name="button" value="5" onclick="dis('5')"></td>
+        <td><input type="button" name="button" value="6" onclick="dis('6')"></td>
+      </tr>
+      <tr>
+        <td><input type="button" name="button" value="*" onclick="dis('*')"></td>
+        <td><input type="button" name="button" value="7" onclick="dis('7')"></td>
+        <td><input type="button" name="button" value="8" onclick="dis('8')"></td>
+        <td><input type="button" name="button" value="9" onclick="dis('9')"></td>
+      </tr>
+      <tr>
+        <td><input type="button" name="button" value="/" onclick="dis('/')"></td>
+        <td><input type="button" name="button" value="." onclick="dis('.')"></td>
+        <td><input type="button" name="button" value="0" onclick="dis('0')"></td>
+        <td><input type="button" name="button" value="=" onclick=solve()></td>
+      </tr>
+    </table>
+  </body>
+</html>

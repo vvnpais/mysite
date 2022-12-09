@@ -1,0 +1,45 @@
+#caption1{
+  font-family: sans-serif;
+  color: red;
+  border: 0.05rem blue solid;
+  border-bottom: 0;
+  background-color: inherit;
+  font-size: 4.5rem;
+}
+h1{
+  text-align: center;
+  color: violet;
+}
+body{
+  background-color: powderblue;
+}
+input[type="button"]{
+  width:100%;
+  text-align: center;
+  height: 100%;
+  font-size: 3rem;
+  border:0;
+}
+input[type="text"]{
+  font-size: 3rem;
+  margin:0;
+  padding:0;
+  border:0;
+  width: 100%;
+  text-align: right;
+  height: 100%;
+}
+td{
+  border: solid 0.05rem blue;
+  border-collapse: collapse;
+  width:25%;
+}
+table{
+  height: 30rem;
+  width: 80%;
+  border: solid 0.05rem blue;
+ border-collapse: collapse;
+}
+#inputtd{
+  text-align: center;
+}

@@ -1,0 +1,116 @@
+body{
+  text-align: center;
+  background-color: pink;
+  margin:0;
+}
+table{
+  position: absolute;
+  top:3%;
+  left: 10%;
+  width:80%;
+  height: 60%;
+  margin:0;
+  border: 0;
+  padding: 0;
+  border-collapse: collapse;
+}
+input[type="button"]{
+  width:95%;
+  height:95%;
+  border:0;
+  margin: 0;
+  padding: 0;
+  background-color: inherit;
+  font-size: 4.5rem;
+}
+#clrsb{
+  border:0;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  font-size: 2rem;
+  width:30%;
+  border: 1px solid black;
+}
+td{
+  margin:0;
+  padding: 0;
+  border:0;
+  width:33%;
+}
+caption{
+  font-size: 4.5rem;
+  border:0;
+  margin: 0;
+  padding:0;
+  padding-bottom: 1rem;
+}
+#txtdiv{
+  margin:0;
+  padding:0;
+  border:0;
+  position: absolute;
+  text-align: center;
+  width:100%;
+  top: 73%;
+  padding-top: 3rem;
+  display: block;
+}
+#t{
+  font-size:2.5rem;
+}
+#clrs{
+  margin:0;
+  padding:0;
+  border:0;
+  position: absolute;
+  text-align: center;
+  width:100%;
+  top: 80%;
+  padding-top: 3rem;
+  display: block;
+}
+#t1{
+  border: 1px solid black;
+  border-left:0;
+  border-top: 0;
+}
+#t2{
+  border: 1px solid black;
+  border-top: 0;
+}
+#t3{
+  border: 1px solid black;
+  border-right:0;
+  border-top: 0;
+}
+#t4{
+  border: 1px solid black;
+  border-left:0;
+}
+#t5{
+  border: 1px solid black;
+}
+#t6{
+  border: 1px solid black;
+  border-right:0;
+}
+#t7{
+  border: 1px solid black;
+  border-left:0;
+  border-bottom: 0;
+}
+#t8{
+  border: 1px solid black;
+  border-bottom:0;
+}
+#t9{
+  border: 1px solid black;
+  border-right:0;
+  border-bottom: 0;
+}
+h1{
+  margin:0;
+  padding:0;
+  border:0;
+}
