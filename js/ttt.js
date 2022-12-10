@@ -74,10 +74,10 @@ function wnchck() {
     k = c[0];
   };
   if (aa == 1 && k == "X") {
-    document.getElementById("t").innerHTML = "X won.";
+    document.getElementById("t").innerHTML = "X won. Clear board to play again.";
   };
   if (aa == 1 && k == "O") {
-    document.getElementById("t").innerHTML = "O won.";
+    document.getElementById("t").innerHTML = "O won. Clear board to play again.";
   };
 };
 
