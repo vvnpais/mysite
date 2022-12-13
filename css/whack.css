@@ -1,0 +1,29 @@
+.square{
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+.grid{
+  display:inline-flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: center;
+  width: 306px;
+  height: 306px;
+}
+.mole{
+  background-image: url('../images/no1.jpg');
+  background-size: cover;
+}
+body{
+  text-align:center;
+}
+.b{
+  padding-top:2rem;
+}
+#p{
+  visibility: hidden;
+  height:2rem;
+  font-size: 1.2rem;
+}
