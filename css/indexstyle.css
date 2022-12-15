@@ -1,6 +1,6 @@
 body{
   margin: 0;
-  padding:90;
+  text-align: center;
 }
 #d1{
   display:flex;
@@ -26,15 +26,19 @@ body{
   width:18rem;
   height:12rem;
 }
-#d2{
-  margin: 2rem;
+.grid{
+  padding: 3rem;
+  width:36.8rem;
+  display: inline-flex;
+  flex-flow: wrap;
 }
-#d3{
-  margin: 2rem;
+.grid div{
+  text-align:center;
+  width:12rem;
+  height:3rem;
 }
-#d4{
-  margin: 2rem;
-}
-#d5{
-  margin: 2rem;
+.b{
+  border-collapse: collapse;
+  margin: 1px;
+  border : 1px solid black;
 }
