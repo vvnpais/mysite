@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const result = document.querySelector('#result');
   const displayCurrentPlayer = document.querySelector('#current-player');
   let currentPlayer=1;
+  const pb=document.getElementById("pb");
 
 for(var i=0, len=squares.length ; i<len ; i++){
 (function(index){
@@ -106,5 +107,24 @@ function checkBoard(){
 
 //add event listener for all squares
 squares.forEach(square => square.addEventListener('click',checkBoard));
+pb.addEventListener('click',()=>{
+  currentPlayer=1;
+  displayCurrentPlayer.innerHTML=currentPlayer;
+  for(let i=0,len=squares.length;i<len;i++){
+      if(squares[i].classList.contains('player-one')){
+        squares[i].classList.remove('player-one');
+      }
+      if(squares[i].classList.contains('player-two')){
+        squares[i].classList.remove('player-two');
+      }
+      if(squares[i].classList.contains('taken')){
+        squares[i].classList.remove('taken');
+      }
+      if(i>=42){
+        squares[i].classList.add('taken');
+      }
+    }
+    result.innerHTML="";
 
+});
 })
