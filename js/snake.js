@@ -102,7 +102,7 @@ function randomApple(){
       direction=+width; //down
     }
   }
-document.addEventListener('keyup',control);
+document.addEventListener('keydown',control);
 startBtn.addEventListener('click',startGame);
 upp.addEventListener('click',()=>{
   squares[currentIndex].classList.remove('snake');
