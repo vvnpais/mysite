@@ -1,0 +1,43 @@
+.grid{
+  border:1px solid black;
+  display:inline-flex;
+  flex-wrap:wrap;
+  height:36rem;
+  width:36rem;
+}
+.grid div{
+  height:4rem;
+  width:4rem;
+}
+body{
+  text-align: center;
+}
+#time{
+  font-size:2rem;
+}
+#button{
+  width:10rem;
+  height:2rem;
+  font-size: 1.25rem;
+}
+.ending-block{
+  background-color: red;
+}
+.starting-block{
+  background-color: blue;
+}
+.c1{
+  background-color:black;
+}
+.c2, .c3{
+  background-color:grey;
+}
+.l1, .l2, .l3{
+  background-color:brown;
+}
+.l4, .l5{
+  background-color:lightblue;
+}
+.frog{
+  background-color: green;
+}
