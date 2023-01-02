@@ -1,0 +1,38 @@
+body{
+  padding:0;
+  border:0;
+  margin:0;
+}
+.box{
+  text-align: center;
+  margin:0;
+  padding:0;
+  border:0;
+  width:49%;
+  display: inline-block;
+}
+.buttonDiv{
+  margin:0;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  height:5rem;
+}
+#convertButton{
+  width:8rem;
+  font-size: 1.25rem;
+}
+#clearButton{
+  width:8rem;
+  font-size: 1.25rem;
+}
+input[type="text"]{
+  width:70%;
+  height:3rem;
+  border:1px solid black;
+  font-size: 1.25rem;
+  text-align: center;
+}
+#warning{
+  font-size: 1.25rem;
+}
