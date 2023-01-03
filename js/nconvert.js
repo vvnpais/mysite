@@ -7,31 +7,66 @@ document.addEventListener('DOMContentLoaded',()=>{
   const clearButton=document.querySelector('#clearButton');
   const warning=document.querySelector('#warning');
 
-function is_numeric(abc){
+function isNumeric(abc){
   return /\d/.test(abc);
 }
 
-function checkInput(abc){
+function warn(check){
+  if(check===0){
+    clearScreen();
+    warning.textContent="Invalid number";
+  }
+  else if(check===1){
+    warning.textContent="";
+  }
+}
+
+function checkInput(abc,d,e){
   let decimalp=0;
+  let check1=0;
+  let check2=0;
+  let check3=0;
   for(let i=0;i<abc.length;i++){
-    let check=0;
-    if(is_numeric(abc[i])){
-      check=1;
+
+    if(isNumeric(abc[i])){
+      check1=1;
+    }
+    if(abc[i].charCodeAt(0)>64 && abc[i].charCodeAt(0)<91){
+      if(abc[i].charCodeAt(0)-55<inputBase.value){
+        check=1;
+      }
+      else{check=0;
+      break;}
+    }
+    if(abc[i].charCodeAt(0)>96 && abc[i].charCodeAt(0)<123){
+      if(abc[i].charCodeAt(0)-87<inputBase.value){
+        check1=1;
+      }
+      else{check1=0;
+      break;}
     }
     if(abc[i]==="." && decimalp<1){
       decimalp++;
-      check=1;
+      check1=1;
     }
-    if(decimalp===2){check==0;}
-    if(check===0){
-      clearScreen();
-      warning.textContent="Invalid number";
-      break;
-    }
-    else{
-      warning.textContent="";
+    if(decimalp===2){check1=0;
+    break;}
+  }
+  for(let i=0;i<d.length;i++){
+    if(!isNumeric(d[i])){
+      check2=1;
     }
   }
+  for(let i=0;i<e.length;i++){
+    if(!isNumeric(e[i])){
+      check3=1;
+    }
+  }
+  if(check1===1 && check2===0 && check3===0){
+    warn(1);
+  }
+  else{warn(0);}
+
 }
 function clearScreen(){
     inputNumber.value="";
@@ -40,34 +75,25 @@ function clearScreen(){
     outputBase.value="";
     warning.textContent="";
 }
-function withDecimal(abc,a,b){
+function withoutDecimal(abc,a,b){
   let arr1=[];
   let decconversion=0;
   for(let i=0;i<abc.length;i++){
-    decconversion=decconversion+abc[i]*Math.pow(a,abc.length-i-1);
+    let c=abc[i];
+    if(c.charCodeAt(0)>64 && c.charCodeAt(0)<91){
+      c=c.charCodeAt(0)-55;
+    }
+    if(c.charCodeAt(0)>96 && c.charCodeAt(0)<123){
+      c=c.charCodeAt(0)-87;
+    }
+    decconversion=decconversion+c*Math.pow(a,abc.length-i-1);
   }
   while(decconversion>0){
     let c=decconversion%b;
-    switch(c){
-      case 10:
-        c="A";
-        break;
-      case 11:
-        c="B";
-        break;
-      case 12:
-        c="C";
-        break;
-      case 13:
-        c="D";
-        break;
-      case 14:
-        c="E";
-        break;
-      case 15:
-        c="F";
-        break;
-    }
+    if(c<b){
+    if(c>9 && c<36){
+      c=String.fromCharCode(c+55);
+    }}
     arr1.push(c);
     decconversion=(decconversion-(decconversion%b))/b;
   }
@@ -77,57 +103,57 @@ function withDecimal(abc,a,b){
   }
   outputNumber.value=outputString;
 }
-function tillDecimal(abc,a,b){
+
+function withDecimal(abc,j,a,b){
   let arr1=[];
-  let decconversion=0;
+  let r1=Math.pow(a,j-1);
+  let r2=1/b;
+  let decconv=0;
   for(let i=0;i<abc.length;i++){
-    decconversion=decconversion+abc[i]*Math.pow(a,abc.length-i-1);
-  }
-  while(decconversion>0){
-    let c=decconversion%b;
-    switch(c){
-      case 10:
-        c="A";
-        break;
-      case 11:
-        c="B";
-        break;
-      case 12:
-        c="C";
-        break;
-      case 13:
-        c="D";
-        break;
-      case 14:
-        c="E";
-        break;
-      case 15:
-        c="F";
-        break;
+    if(abc[i]==="."){continue;}
+    let c=abc[i];
+    if(c.charCodeAt(0)>64 && c.charCodeAt(0)<91){
+      c=c.charCodeAt(0)-55;
     }
+    if(c.charCodeAt(0)>96 && c.charCodeAt(0)<123){
+      c=c.charCodeAt(0)-87;
+    }
+    decconv=decconv+c*r1;
+    r1=r1/a;
+  }
+  let e=decconv%1;
+  let d=decconv-decconv%1;
+
+  while(d>0){
+    let c=d%b;
+    if(c<b){
+    if(c>9 && c<36){
+      c=String.fromCharCode(c+55);
+    }}
     arr1.push(c);
-    decconversion=(decconversion-(decconversion%b))/b;
+    d=(d-(d%b))/b;
   }
   let outputString="";
   for(let i=0;i<arr1.length;i++){
     outputString=outputString+arr1[arr1.length-i-1];
   }
-  return outputString;
-}
-
-function withoutDecimal(abc,i,a,b){
-  let arr1=[];
-  let r1=1/a;
-  let r2=1/b;
-  let part1=tillDecimal(abc.slice(0,i),a,b);
-  let afterPoint1=abc.slice(i+1,abc.length);
-
+  outputString=outputString+".";
+  let f=5;
+  while(e>0 && f>0){
+    let g=e*b;
+    g=g-g%1;
+    if(g>9 && g<35){
+      g=String.fromCharCode(g+55);
+    }
+    outputString=outputString+g;
+    e=(e*b)%1;
+    f--;
+  }
+  outputNumber.value=outputString;
 }
 
 convertButton.addEventListener('click',()=>{
-  checkInput(inputNumber.value);
-  checkInput(inputBase.value);
-  checkInput(outputBase.value);
+  checkInput(inputNumber.value,inputBase.value,outputBase.value);
   let decimalIndex=-1;
   for(let i=0;i<inputNumber.value.length;i++){
     if(inputNumber.value[i]==="."){
@@ -135,8 +161,8 @@ convertButton.addEventListener('click',()=>{
     }
   }
   if(decimalIndex===-1){
-    withDecimal(inputNumber.value,inputBase.value,outputBase.value);
-  }else{withoutDecimal(inputNumber.value,decimalIndex,inputBase.value,outputBase.value);}
+    withoutDecimal(inputNumber.value,inputBase.value,outputBase.value);
+  }else{withDecimal(inputNumber.value,decimalIndex,inputBase.value,outputBase.value);}
 
 });
 clearButton.addEventListener('click',clearScreen);
