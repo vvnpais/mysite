@@ -2,6 +2,7 @@ body{
   padding:0;
   border:0;
   margin:0;
+  text-align: center;
 }
 h1{
   font-size: 2.5rem;
@@ -19,16 +20,16 @@ h1{
   display: inline-block;
   width: 100%;
   text-align: center;
-  height:6rem;
+  height:5rem;
 }
 #convertButton{
   width:40%;
-  height:5rem;
+  height:4.5rem;
   font-size: 2.5rem;
 }
 #clearButton{
   width:40%;
-  height:5rem;
+  height:4.5rem;
   font-size: 2.5rem;
 }
 input[type="text"]{
@@ -39,5 +40,8 @@ input[type="text"]{
   text-align: center;
 }
 #warning{
-  font-size: 1.5rem;
+  font-size: 2.5rem;
+}
+#heading{
+  margin-bottom: 0;
 }
