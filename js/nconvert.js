@@ -33,9 +33,9 @@ function checkInput(abc,d,e){
     }
     if(abc[i].charCodeAt(0)>64 && abc[i].charCodeAt(0)<91){
       if(abc[i].charCodeAt(0)-55<inputBase.value){
-        check=1;
+        check1=1;
       }
-      else{check=0;
+      else{check1=0;
       break;}
     }
     if(abc[i].charCodeAt(0)>96 && abc[i].charCodeAt(0)<123){
@@ -83,17 +83,16 @@ function withoutDecimal(abc,a,b){
     if(c.charCodeAt(0)>64 && c.charCodeAt(0)<91){
       c=c.charCodeAt(0)-55;
     }
-    if(c.charCodeAt(0)>96 && c.charCodeAt(0)<123){
+    else if(c.charCodeAt(0)>96 && c.charCodeAt(0)<123){
       c=c.charCodeAt(0)-87;
     }
     decconversion=decconversion+c*Math.pow(a,abc.length-i-1);
   }
   while(decconversion>0){
     let c=decconversion%b;
-    if(c<b){
     if(c>9 && c<36){
       c=String.fromCharCode(c+55);
-    }}
+    }
     arr1.push(c);
     decconversion=(decconversion-(decconversion%b))/b;
   }
