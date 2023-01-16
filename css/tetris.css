@@ -1,12 +1,102 @@
-.grid div{
-  background-color: yellow;
-  height: 1.25rem;
-  width: 1.25rem;
+body{
+  text-align: center;
+  margin:0;
+  padding:0;
+}
+.full_box{
+  width:100%;
+  display:inline-flex;
+  flex-wrap: wrap;
+}
+.pshape{
+  width:40%;
+  display: inline-block;
+}
+.previous-shape{
+  width:100%;
+  display:inline-block;
+}
+.previous-grid{
+  height: 7.5rem;
+  width:7.5rem;
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+.previous-grid div{
+  height: 1.75rem;
+  width: 1.75rem;
+  border:0.0625rem black solid;
+}
+.buttons-shape{
+  margin-top:1rem;
+  width:100%;
+  display:inline-block;
+}
+.buttons{
+  display:inline-flex;
+  flex-wrap:wrap;
+  height:9rem;
+  width:9rem;
+}
+.buttons div{
+  height:3rem;
+  width:3rem;
+}
+.game{
+  width:60%;
+  display: inline-block;
 }
 .grid{
-  background-color: blue;
-  height: 25rem;
-  width:12.5rem;
-  display: flex;
+  background-color: yellow;
+  height: 37.5rem;
+  width:18.75rem;
+  display: inline-flex;
   flex-wrap: wrap;
+}
+.grid div{
+  height: 1.75rem;
+  width: 1.75rem;
+  border:0.0625rem black solid;
+}
+.block{
+  background-color: blue;
+}
+.block2{
+  background-color: purple;
+}
+.block3{
+  background-color: green;
+}
+.bclass{
+  display: inline-block;
+  width:100%;
+}
+.d{
+  border:1px solid black;
+  width: 40%;
+  display:inline-block;
+  margin-bottom:1rem;
+  padding:0;
+}
+#b1{
+  width:8rem;
+  height:3rem;
+  font-size:1.75rem;
+  margin:1rem;
+}
+.upb{
+  background-image: url('../images/rotate-cw.svg');
+  background-size: cover;
+}
+.downb{
+  background-image: url('../images/down.svg');
+  background-size: cover;
+}
+.leftb{
+  background-image: url('../images/left.svg');
+  background-size: cover;
+}
+.rightb{
+  background-image: url('../images/right.svg');
+  background-size: cover;
 }

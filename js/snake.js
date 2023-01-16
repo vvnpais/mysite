@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   //index 2 is head,0 is tail,1 is body
   let direction=1;
   let score=0;
-  let speed=0.95;
+  let speed=0.97;
   let intervalTime=0;
   let interval=0;
 
@@ -79,26 +79,13 @@ function randomApple(){
   //assign function to keycodes
   function control(e){
     squares[currentIndex].classList.remove('snake');//
-
-    if(e.keyCode===39){
+    if(e.keyCode===39 && direction!=-1){
       direction=1; //right;
-    }else if(e.keyCode===38){
+    }else if(e.keyCode===38 && direction!=+width){
       direction=-width; //up
-    }else if(e.keyCode===37){
+    }else if(e.keyCode===37 && direction!=+1){
       direction=-1; //left
-    }else if(e.keyCode===40){
-      direction=+width; //down
-    }
-  }
-  function con(e){
-    squares[currentIndex].classList.remove('snake');//
-    if(e===39 && direction!=-1){
-      direction=1; //right;
-    }else if(e===38 && direction!=+width){
-      direction=-width; //up
-    }else if(e===37 && direction!=+1){
-      direction=-1; //left
-    }else if(e===40 && direction!=-width){
+    }else if(e.keyCode===40 && direction!=-width){
       direction=+width; //down
     }
   }
