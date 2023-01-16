@@ -21,14 +21,24 @@ body{
 }
 .top-box{
   display: inline-block;
-  width:90%;
+  width:70%;
 }
 .topboxdiv{
   display:inline-block;
-  width:45%;
+  width:32%;
+  margin:0;
+  margin-bottom: 1rem;
 }
 #startBtn{
   height:3rem;
   width:9rem;
   font-size:1.25rem;
+}
+.diffbutton{
+  width:60%;
+  height:1.5rem;
+}
+.aaa{
+  width:60%;
+  display:inline-block;
 }

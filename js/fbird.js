@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 const squares=document.querySelectorAll('.grid div');
 const scoreDisplay=document.querySelector('#score');
+const easyb=document.querySelector('.easyb');
+const mediumb=document.querySelector('.mediumb');
+const hardb=document.querySelector('.hardb');
 const width=45;
 const scale=2;
 const nwidth=width*scale;
@@ -14,6 +17,37 @@ let maxObstacleLength=11;
 let minObstacleLength=9;
 let increaseScoreId=null;
 let score=0;
+let obstacleMoveSpeed=100;
+let obstacleFormSpeed=1000;
+let increaseScoreSpeed=1000;
+
+easyb.addEventListener('click',()=>{
+  obstacleMoveSpeed=120;
+  obstacleFormSpeed=1200;
+  increaseScoreSpeed=1200;
+  maxObstacleLength=11;
+  minObstacleLength=6;
+  start();
+  start();
+})
+mediumb.addEventListener('click',()=>{
+  obstacleMoveSpeed=80;
+  obstacleFormSpeed=800;
+  increaseScoreSpeed=800;
+  maxObstacleLength=11;
+  minObstacleLength=9;
+  start();
+  start();
+})
+hardb.addEventListener('click',()=>{
+  obstacleMoveSpeed=40;
+  obstacleFormSpeed=400;
+  increaseScoreSpeed=400;
+  maxObstacleLength=12;
+  minObstacleLength=10;
+  start();
+  start();
+})
 
 function start(){
     if(movingDown!=null){
@@ -31,10 +65,10 @@ function start(){
     }
     else{
       movingDown=setInterval(moveDown,180);
-      obstaclesMove=setInterval(moveObstaclesLeft,100);
-      obstaclesForm=setInterval(formObstacles,1000);
-      checkLossId=setInterval(checkLoss,100);
-      increaseScoreId=setInterval(increaseScore,1000);
+      obstaclesMove=setInterval(moveObstaclesLeft,obstacleMoveSpeed);
+      obstaclesForm=setInterval(formObstacles,obstacleFormSpeed);
+      checkLossId=setInterval(checkLoss,50);
+      increaseScoreId=setInterval(increaseScore,increaseScoreSpeed);
       document.addEventListener('keydown',control);
     }
 }
