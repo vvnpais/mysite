@@ -188,10 +188,6 @@ function rotateBoard(){
 
 test.addEventListener('click',rotateBoard);
 
-// if(cartesianIsValid([-1,8])===true){
-//   window.alert('True');
-// }
-// else{window.alert('False');}
 
 for(let i=0; i<squares.length; i++){
   squares[i].addEventListener('click',()=>{
