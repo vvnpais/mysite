@@ -1,0 +1,79 @@
+body{
+  text-align: center;
+}
+.grid{
+  display: inline-flex;
+  flex-wrap: wrap;
+  height: 44rem;
+  width: 44rem;
+  border: 0.25rem solid black;
+}
+.grid div{
+  height:5rem;
+  width:5rem;
+}
+.purple{
+  background-color: purple;
+}
+.white{
+  background-color: white;
+}
+.bb{
+  border: 0.25rem solid black;
+}
+.yy{
+  border: 0.25rem solid yellow;
+}
+#test{
+  width:8rem;
+  height:3rem;
+  font-size:1.25rem
+}
+.bpawn{
+  background-image:url('../images/bpawn.png');
+  background-size: cover;
+}
+.brook{
+  background-image:url('../images/brook.png');
+  background-size: cover;
+}
+.bknight{
+  background-image:url('../images/bknight.png');
+  background-size: cover;
+}
+.bbishop{
+  background-image:url('../images/bbishop.png');
+  background-size: cover;
+}
+.bqueen{
+  background-image:url('../images/bqueen.png');
+  background-size: cover;
+}
+.bking{
+  background-image:url('../images/bking.png');
+  background-size: cover;
+}
+.wpawn{
+  background-image:url('../images/wpawn.png');
+  background-size: cover;
+}
+.wrook{
+  background-image:url('../images/wrook.png');
+  background-size: cover;
+}
+.wknight{
+  background-image:url('../images/wknight.png');
+  background-size: cover;
+}
+.wbishop{
+  background-image:url('../images/wbishop.png');
+  background-size: cover;
+}
+.wqueen{
+  background-image:url('../images/wqueen.png');
+  background-size: cover;
+}
+.wking{
+  background-image:url('../images/wking.png');
+  background-size: cover;
+}

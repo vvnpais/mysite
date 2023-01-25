@@ -186,14 +186,4 @@ function moveObstaclesLeft(){
   }
 }
 
-
-
-
-
-
-
-
-
-
-
 })
