@@ -77,3 +77,6 @@ body{
   background-image:url('../images/wking.png');
   background-size: cover;
 }
+.green{
+  background-color: lightgreen;
+}

@@ -24,20 +24,21 @@ h1{
 }
 #convertButton{
   width:40%;
-  height:4.5rem;
+  height:4rem;
   font-size: 2.5rem;
 }
 #clearButton{
   width:40%;
-  height:4.5rem;
+  height:4rem;
   font-size: 2.5rem;
 }
 input[type="text"]{
   width:70%;
-  height:6rem;
+  height:5rem;
   border:1px solid black;
   font-size: 2.5rem;
   text-align: center;
+  font-family: monospace;
 }
 #warning{
   font-size: 2.5rem;

@@ -69,6 +69,19 @@ function highlight(a){
     }
 }
 
+function highlightValidArray(chck){
+    if(chck===0){
+      for(let i=0;i<squares.length;i++){
+        squares[i].classList.remove('green');
+      }
+    }
+    else if(chck===1){
+      for(let i=0;i<squares.length;i++){
+        squares[validArray[i]].classList.add('green');
+      }
+    }
+}
+
 function addImage(i,abc){
   if(squares[i].classList.contains(abc)){
     squares[i].classList.remove(abc);
@@ -184,6 +197,7 @@ function rotateBoard(){
     blackArray[i]=63-blackArray[i];
   }
   validArray=[]
+  highlightValidArray(0);
 }
 
 test.addEventListener('click',rotateBoard);
@@ -194,11 +208,10 @@ for(let i=0; i<squares.length; i++){
     if(firstClickIndex==null){
     firstClickIndex=i;
     firstClick();}
-  })
-  squares[i].addEventListener('click',()=>{
-    if(firstClickIndex!=null){
-    secondClickIndex=i;
-    secondClick();}
+
+    else{
+      secondClickIndex=i;
+      secondClick();}
   })
 }
 
@@ -224,6 +237,8 @@ function firstClick(){
       updateValidArray(currentHighlightIndex);
   }
 }
+console.log(validArray);
+highlightValidArray(1);
 }
 
 function updateValidArray(index){
@@ -308,10 +323,10 @@ function rookValidArray(index){
   let y=cart[1];
   if(white(index)){
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x,y+i]))){
+      if( isValid([x,y+i]) && empty(cartesianToIndex([x,y+i]))){
         validArrayReturn.push(cartesianToIndex([x,y+i]));
       }else{
-        if(black(cartesianToIndex([x,y+i]))){
+        if( isValid([x,y+i]) && black(cartesianToIndex([x,y+i]))){
           validArrayReturn.push(cartesianToIndex([x,y+i]));
           break;
         }
@@ -319,10 +334,10 @@ function rookValidArray(index){
       }
     }
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x+i,y]))){
+      if( isValid([x+i,y]) && empty(cartesianToIndex([x+i,y]))){
         validArrayReturn.push(cartesianToIndex([x+i,y]));
       }else{
-        if(black(cartesianToIndex([x+i,y]))){
+        if( isValid([x+i,y]) && black(cartesianToIndex([x+i,y]))){
           validArrayReturn.push(cartesianToIndex([x+i,y]));
           break;
         }
@@ -330,10 +345,10 @@ function rookValidArray(index){
       }
     }
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x,y-i]))){
+      if( isValid([x,y-i]) && empty(cartesianToIndex([x,y-i]))){
         validArrayReturn.push(cartesianToIndex([x,y-i]));
       }else{
-        if(black(cartesianToIndex([x,y-i]))){
+        if( isValid([x,y-i]) && black(cartesianToIndex([x,y-i]))){
           validArrayReturn.push(cartesianToIndex([x,y-i]));
           break;
         }
@@ -341,10 +356,10 @@ function rookValidArray(index){
       }
     }
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x-i,y]))){
+      if( isValid([x-i,y]) && empty(cartesianToIndex([x-i,y]))){
         validArrayReturn.push(cartesianToIndex([x-i,y]));
       }else{
-        if(black(cartesianToIndex([x-i,y]))){
+        if( isValid([x-i,y]) && black(cartesianToIndex([x-i,y]))){
           validArrayReturn.push(cartesianToIndex([x-i,y]));
           break;
         }
@@ -354,10 +369,10 @@ function rookValidArray(index){
   }
   if(black(index)){
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x,y+i]))){
+      if( isValid([x,y+i]) && empty(cartesianToIndex([x,y+i]))){
         validArrayReturn.push(cartesianToIndex([x,y+i]));
       }else{
-        if(white(cartesianToIndex([x,y+i]))){
+        if( isValid([x,y+i]) && white(cartesianToIndex([x,y+i]))){
           validArrayReturn.push(cartesianToIndex([x,y+i]));
           break;
         }
@@ -365,10 +380,10 @@ function rookValidArray(index){
       }
     }
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x+i,y]))){
+      if( isValid([x+i,y]) && empty(cartesianToIndex([x+i,y]))){
         validArrayReturn.push(cartesianToIndex([x+i,y]));
       }else{
-        if(white(cartesianToIndex([x+i,y]))){
+        if( isValid([x+i,y]) && white(cartesianToIndex([x+i,y]))){
           validArrayReturn.push(cartesianToIndex([x+i,y]));
           break;
         }
@@ -376,10 +391,10 @@ function rookValidArray(index){
       }
     }
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x,y-i]))){
+      if( isValid([x,y-i]) && empty(cartesianToIndex([x,y-i]))){
         validArrayReturn.push(cartesianToIndex([x,y-i]));
       }else{
-        if(white(cartesianToIndex([x,y-i]))){
+        if( isValid([x,y-i]) && white(cartesianToIndex([x,y-i]))){
           validArrayReturn.push(cartesianToIndex([x,y-i]));
           break;
         }
@@ -387,11 +402,112 @@ function rookValidArray(index){
       }
     }
     for(let i=1;i<8;i++){
-      if(empty(cartesianToIndex([x-i,y]))){
+      if( isValid([x-i,y]) && empty(cartesianToIndex([x-i,y]))){
         validArrayReturn.push(cartesianToIndex([x-i,y]));
       }else{
-        if(white(cartesianToIndex([x-i,y]))){
+        if( isValid([x-i,y]) && white(cartesianToIndex([x-i,y]))){
           validArrayReturn.push(cartesianToIndex([x-i,y]));
+          break;
+        }
+        else{break;}
+      }
+    }
+  }
+  return stripArray(validArrayReturn);
+}
+
+function bishopValidArray(index){
+  let validArray=[]
+  let validArrayReturn=[]
+  let cart=indexToCartesian(index);
+  let x=cart[0];
+  let y=cart[1];
+  if(white(index)){
+    for(let i=1;i<8;i++){
+      if( isValid([x+i,y+i]) && empty(cartesianToIndex([x+i,y+i]))){
+        validArrayReturn.push(cartesianToIndex([x+i,y+i]));
+      }else{
+        if( isValid([x+i,y+i]) && black(cartesianToIndex([x+i,y+i]))){
+          validArrayReturn.push(cartesianToIndex([x+i,y+i]));
+          break;
+        }
+        else{break;}
+      }
+    }
+    for(let i=1;i<8;i++){
+      if( isValid([x+i,y-i]) && empty(cartesianToIndex([x+i,y-i]))){
+        validArrayReturn.push(cartesianToIndex([x+i,y-i]));
+      }else{
+        if( isValid([x+i,y-i]) && black(cartesianToIndex([x+i,y-i]))){
+          validArrayReturn.push(cartesianToIndex([x+i,y-i]));
+          break;
+        }
+        else{break;}
+      }
+    }
+    for(let i=1;i<8;i++){
+      if( isValid([x-i,y-i]) && empty(cartesianToIndex([x-i,y-i]))){
+        validArrayReturn.push(cartesianToIndex([x-i,y-i]));
+      }else{
+        if( isValid([x-i,y-i]) && black(cartesianToIndex([x-i,y-i]))){
+          validArrayReturn.push(cartesianToIndex([x-i,y-i]));
+          break;
+        }
+        else{break;}
+      }
+    }
+    for(let i=1;i<8;i++){
+      if( isValid([x-i,y+i]) && empty(cartesianToIndex([x-i,y+i]))){
+        validArrayReturn.push(cartesianToIndex([x-i,y+i]));
+      }else{
+        if( isValid([x-i,y+i]) && black(cartesianToIndex([x-i,y+i]))){
+          validArrayReturn.push(cartesianToIndex([x-i,y+i]));
+          break;
+        }
+        else{break;}
+      }
+    }
+  }
+  if(black(index)){
+    for(let i=1;i<8;i++){
+      if( isValid([x+i,y+i]) && empty(cartesianToIndex([x+i,y+i]))){
+        validArrayReturn.push(cartesianToIndex([x+i,y+i]));
+      }else{
+        if( isValid([x+i,y+i]) && white(cartesianToIndex([x+i,y+i]))){
+          validArrayReturn.push(cartesianToIndex([x+i,y+i]));
+          break;
+        }
+        else{break;}
+      }
+    }
+    for(let i=1;i<8;i++){
+      if( isValid([x+i,y-i]) && empty(cartesianToIndex([x+i,y-i]))){
+        validArrayReturn.push(cartesianToIndex([x+i,y-i]));
+      }else{
+        if( isValid([x+i,y-i]) && white(cartesianToIndex([x+i,y-i]))){
+          validArrayReturn.push(cartesianToIndex([x+i,y-i]));
+          break;
+        }
+        else{break;}
+      }
+    }
+    for(let i=1;i<8;i++){
+      if( isValid([x-i,y-i]) && empty(cartesianToIndex([x-i,y-i]))){
+        validArrayReturn.push(cartesianToIndex([x-i,y-i]));
+      }else{
+        if( isValid([x-i,y-i]) && white(cartesianToIndex([x-i,y-i]))){
+          validArrayReturn.push(cartesianToIndex([x-i,y-i]));
+          break;
+        }
+        else{break;}
+      }
+    }
+    for(let i=1;i<8;i++){
+      if( isValid([x-i,y+i]) && empty(cartesianToIndex([x-i,y+i]))){
+        validArrayReturn.push(cartesianToIndex([x-i,y+i]));
+      }else{
+        if( isValid([x-i,y+i]) && white(cartesianToIndex([x-i,y+i]))){
+          validArrayReturn.push(cartesianToIndex([x-i,y+i]));
           break;
         }
         else{break;}
@@ -408,18 +524,10 @@ function knightValidArray(index){
   let y=cart[1];
 }
 
-function bishopValidArray(index){
-  let validArrayReturn=[]
-  let cart=indexToCartesian(index);
-  let x=cart[0];
-  let y=cart[1];
-}
 
 function queenValidArray(index){
-  let validArrayReturn=[]
-  let cart=indexToCartesian(index);
-  let x=cart[0];
-  let y=cart[1];
+  let validArrayReturn=rookValidArray(index).concat(bishopValidArray(index));
+  return validArrayReturn;
 }
 
 function kingValidArray(index){
