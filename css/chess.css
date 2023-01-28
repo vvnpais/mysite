@@ -1,7 +1,21 @@
 body{
   text-align: center;
+  padding: 0;
+  margin: 0;
+}
+.box{
+  position: relative;
+  display: inline-block;
+  width: 56rem;
+  height: 45rem;
+  text-align: center;
+  /* border: 1px solid black; */
+  margin: 0;
+  margin-top: 2rem;
 }
 .grid{
+  position: absolute;
+  left:0;
   display: inline-flex;
   flex-wrap: wrap;
   height: 44rem;
@@ -11,6 +25,38 @@ body{
 .grid div{
   height:5rem;
   width:5rem;
+}
+.pieces{
+  position: absolute;
+  right:0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  height: 44rem;
+  width: 7rem;
+  /* border: 0.25rem solid black; */
+}
+.piecesBox{
+  position: relative;
+  height: 3.5rem;
+  width:7rem;
+  /* border:1px solid black; */
+}
+.piecesBox div{
+  position: absolute;
+  left: 0;
+  height:3.25rem;
+  width:3.25rem;
+  border: 0.125rem solid black;
+}
+.ph1{
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  height: 3.5rem;
+  width: 3.25rem;
+  background-color: powderblue;
+  font-size: 3.25rem;
 }
 .purple{
   background-color: purple;
