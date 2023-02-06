@@ -137,7 +137,7 @@ function withDecimal(abc,j,a,b){
     outputString=outputString+arr1[arr1.length-i-1];
   }
   outputString=outputString+".";
-  let f=5;
+  let f=9;
   while(e>0 && f>0){
     let g=e*b;
     g=g-g%1;

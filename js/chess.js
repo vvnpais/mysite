@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   let firstClickIndex=null;
   let secondClickIndex=null;
   let tempForClassList=null;
-  const whiteArray=[48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63];
-  const blackArray=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+  const whiteArray=[];
+  const blackArray=[];
 
 
   for(let i=0;i<squares.length;i++){
@@ -87,13 +87,19 @@ function highlightValidArray(chck){
       }
     }
     else if(chck===1){
-      for(let i=0;i<squares.length;i++){
+      for(let i=0;i<validArray.length;i++){
         squares[validArray[i]].classList.add('green');
       }
     }
 }
 
 function addImage(i,abc){
+  if(abc[0]==='w'){
+    whiteArray.push(i);
+  }
+  else if(abc[0]==='b'){
+    blackArray.push(i);
+  }
   if(squares[i].classList.contains(abc)){
     squares[i].classList.remove(abc);
   }else{
@@ -225,6 +231,90 @@ for(let i=0; i<squares.length; i++){
   })
 }
 
+let castling=0;
+
+// function underAttack(index,abc){
+//       let result=false;
+//   if(abc==="w"){
+//     whiteArray.push(index);
+//     for(let i=0;i<blackArray.length;i++){
+//       let card1=whichImage(blackArray[i]);
+//       if(card1==="bpawn"){
+//         if(pawnValidArray(blackArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       else if(card1==="brook"){
+//         if(rookValidArray(blackArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="bknight"){
+//         if(knightValidArray(blackArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="bbishop"){
+//         if(bishopValidArray(blackArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="bqueen"){
+//         if(queenValidArray(blackArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="bking"){
+//         if(kingValidArray(blackArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//     }
+//     let temp=whiteArray.indexOf(index);
+//     whiteArray.splice(temp,1);
+//   }
+//   if(abc==="b"){
+//     blackArray.push(index);
+//     for(let i=0;i<whiteArray.length;i++){
+//       let card1=whichImage(whiteArray[i]);
+//       if(card1==="wpawn"){
+//         if(pawnValidArray(whiteArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       else if(card1==="wrook"){
+//         if(rookValidArray(whiteArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="wknight"){
+//         if(knightValidArray(whiteArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="wbishop"){
+//         if(bishopValidArray(whiteArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="wqueen"){
+//         if(queenValidArray(whiteArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//       if(card1==="wking"){
+//         if(kingValidArray(whiteArray[i]).includes(index)){
+//           result=true;
+//         }
+//       }
+//     }
+//     let temp=blackArray.indexOf(index);
+//     blackArray.splice(temp,1);
+//   }
+//   return result;
+// }
+
+
 function firstClick(){
   if(turn==="w"){
     if(whiteArray.includes(firstClickIndex)){
@@ -247,7 +337,7 @@ function firstClick(){
       updateValidArray(currentHighlightIndex);
   }
 }
-console.log(validArray);
+// console.log(validArray);
 highlightValidArray(1);
 }
 
@@ -255,46 +345,46 @@ function updateValidArray(index){
   validArray=[];
       switch(true){
         case squares[index].classList.contains('bpawn'):
-          validArray=pawnValidArray(index);
+          validArray=pawnValidArray(index,"b",null);
           break;
         case squares[index].classList.contains('brook'):
-          validArray=rookValidArray(index);
+          validArray=rookValidArray(index,"b",null);
           break;
         case squares[index].classList.contains('bknight'):
-          validArray=knightValidArray(index);
+          validArray=knightValidArray(index,"b",null);
           break;
         case squares[index].classList.contains('bbishop'):
-          validArray=bishopValidArray(index);
+          validArray=bishopValidArray(index,"b",null);
           break;
         case squares[index].classList.contains('bqueen'):
-          validArray=queenValidArray(index);
+          validArray=queenValidArray(index,"b",null);
           break;
         case squares[index].classList.contains('bking'):
-          validArray=kingValidArray(index);
+          validArray=kingValidArray(index,"b",null);
           break;
         case squares[index].classList.contains('wpawn'):
-          validArray=pawnValidArray(index);
+          validArray=pawnValidArray(index,"w",null);
           break;
         case squares[index].classList.contains('wrook'):
-          validArray=rookValidArray(index);
+          validArray=rookValidArray(index,"w",null);
           break;
         case squares[index].classList.contains('wknight'):
-          validArray=knightValidArray(index);
+          validArray=knightValidArray(index,"w",null);
           break;
         case squares[index].classList.contains('wbishop'):
-          validArray=bishopValidArray(index);
+          validArray=bishopValidArray(index,"w",null);
           break;
         case squares[index].classList.contains('wqueen'):
-          validArray=queenValidArray(index);
+          validArray=queenValidArray(index,"w",null);
           break;
         case squares[index].classList.contains('wking'):
-          validArray=kingValidArray(index);
+          validArray=kingValidArray(index,"w",null);
           break;
       }
 }
 
-function pawnValidArray(index){
-  let validArray=[]
+function pawnValidArray(index,clr,uA){
+  validArray=[];
   let validArrayReturn=[]
   let cart=indexToCartesian(index);
   let x=cart[0];
@@ -304,7 +394,10 @@ function pawnValidArray(index){
       validArrayReturn.push(cartesianToIndex([x,y+2]));
     }
   }
-  if(white(index)){
+  if(clr==="w"){
+    if(uA!=null){
+      blackArray.push(uA);
+    }
     if( isValid([x,y+1]) && empty(cartesianToIndex([x,y+1])) ){
       validArrayReturn.push(cartesianToIndex([x,y+1]));
     }
@@ -314,8 +407,14 @@ function pawnValidArray(index){
     if( isValid([x-1,y+1]) && black(cartesianToIndex([x-1,y+1])) ){
       validArrayReturn.push(cartesianToIndex([x-1,y+1]));
     }
+    if(uA!=null){
+    blackArray.pop();
+    }
   }
-  if(black(index)){
+  if(clr==="b"){
+    if(uA!=null){
+      whiteArray.push(uA);
+    }
     if( isValid([x,y+1]) && empty(cartesianToIndex([x,y+1])) ){
       validArrayReturn.push(cartesianToIndex([x,y+1]));
     }
@@ -325,18 +424,24 @@ function pawnValidArray(index){
     if( isValid([x-1,y+1]) && white(cartesianToIndex([x-1,y+1])) ){
       validArrayReturn.push(cartesianToIndex([x-1,y+1]));
     }
+    if(uA!=null){
+      whiteArray.pop();
+    }
   }
-  console.log(whichImage(index)+stripArray(validArrayReturn));
+  // console.log(whichImage(index)+stripArray(validArrayReturn));
   return stripArray(validArrayReturn);
 }
 
-function rookValidArray(index){
-  let validArray=[]
+function rookValidArray(index,clr,uA){
+  validArray=[];
   let validArrayReturn=[]
   let cart=indexToCartesian(index);
   let x=cart[0];
   let y=cart[1];
-  if(white(index)){
+  if(clr==="w"){
+    if(uA!=null){
+      blackArray.push(uA);
+    }
     for(let i=1;i<8;i++){
       if( isValid([x,y+i]) && empty(cartesianToIndex([x,y+i]))){
         validArrayReturn.push(cartesianToIndex([x,y+i]));
@@ -381,8 +486,14 @@ function rookValidArray(index){
         else{break;}
       }
     }
+    if(uA!=null){
+      blackArray.pop(uA);
+    }
   }
-  if(black(index)){
+  if(clr==="b"){
+    if(uA!=null){
+      whiteArray.push(uA);
+    }
     for(let i=1;i<8;i++){
       if( isValid([x,y+i]) && empty(cartesianToIndex([x,y+i]))){
         validArrayReturn.push(cartesianToIndex([x,y+i]));
@@ -427,17 +538,23 @@ function rookValidArray(index){
         else{break;}
       }
     }
+    if(uA!=null){
+      whiteArray.pop();
+    }
   }
   return stripArray(validArrayReturn);
 }
 
-function bishopValidArray(index){
-  validArray=[]
+function bishopValidArray(index,clr,uA){
+  validArray=[];
   let validArrayReturn=[]
   let cart=indexToCartesian(index);
   let x=cart[0];
   let y=cart[1];
-  if(white(index)){
+  if(clr==="w"){
+    if(uA!=null){
+      blackArray.push(uA);
+    }
     for(let i=1;i<8;i++){
       if( isValid([x+i,y+i]) && empty(cartesianToIndex([x+i,y+i]))){
         validArrayReturn.push(cartesianToIndex([x+i,y+i]));
@@ -482,8 +599,14 @@ function bishopValidArray(index){
         else{break;}
       }
     }
+    if(uA!=null){
+      whiteArray.pop();
+    }
   }
-  if(black(index)){
+  if(clr==="b"){
+    if(uA!=null){
+      whiteArray.push(uA);
+    }
     for(let i=1;i<8;i++){
       if( isValid([x+i,y+i]) && empty(cartesianToIndex([x+i,y+i]))){
         validArrayReturn.push(cartesianToIndex([x+i,y+i]));
@@ -528,60 +651,88 @@ function bishopValidArray(index){
         else{break;}
       }
     }
+    if(uA!=null){
+      whiteArray.pop();
+    }
   }
   return stripArray(validArrayReturn);
 }
 
-function knightValidArray(index){
-  validArray=[]
-  let validArrayReturn=[]
+function knightValidArray(index,clr,uA){
+  validArray=[];
+  let validArrayReturn=[];
   let cart=indexToCartesian(index);
   let x=cart[0];
   let y=cart[1];
   let knightArray=[[x+1,y+2],[x+2,y+1],[x-1,y+2],[x-2,y+1],[x+1,y-2],[x+2,y-1],[x-1,y-2],[x-2,y-1]];
-  if(white(index)){
+  if(clr==="w"){
+    if(uA!=null){
+      blackArray.push(uA);
+    }
   for(let i=0; i<knightArray.length; i++){
     if( isValid(knightArray[i]) && !white(cartesianToIndex(knightArray[i])) ){
       validArrayReturn.push(cartesianToIndex(knightArray[i]));
     }
   }
+  if(uA!=null){
+    blackArray.pop();
   }
-  if(black(index)){
+  }
+  if(clr==="b"){
+    if(uA!=null){
+      whiteArray.push(uA);
+    }
   for(let i=0; i<knightArray.length; i++){
     if( isValid(knightArray[i]) && !black(cartesianToIndex(knightArray[i])) ){
       validArrayReturn.push(cartesianToIndex(knightArray[i]));
     }
   }
+  if(uA!=null){
+    whiteArray.pop();
+  }
   }
   return stripArray(validArrayReturn);
 }
-function kingValidArray(index){
-  validArray=[]
+function kingValidArray(index,clr,uA){
+  validArray=[];
   let validArrayReturn=[]
   let cart=indexToCartesian(index);
   let x=cart[0];
   let y=cart[1];
   let kingArray=[[x+1,y],[x-1,y],[x,y+1],[x,y-1],[x-1,y-1],[x-1,y+1],[x+1,y-1],[x+1,y+1]];
-  if(white(index)){
+  if(clr==="w"){
+    if(uA!=null){
+      blackArray.push(uA);
+    }
   for(let i=0; i<kingArray.length; i++){
     if( isValid(kingArray[i]) && !white(cartesianToIndex(kingArray[i])) ){
       validArrayReturn.push(cartesianToIndex(kingArray[i]));
     }
   }
+  if(uA!=null){
+    blackArray.pop();
   }
-  if(black(index)){
+  }
+  if(clr==="b"){
+    if(uA!=null){
+      whiteArray.push(uA);
+    }
   for(let i=0; i<kingArray.length; i++){
     if( isValid(kingArray[i]) && !black(cartesianToIndex(kingArray[i])) ){
       validArrayReturn.push(cartesianToIndex(kingArray[i]));
     }
+  }
+  if(uA!=null){
+    whiteArray.pop();
   }
   }
   return stripArray(validArrayReturn);
 }
 
 
-function queenValidArray(index){
-  let validArrayReturn=rookValidArray(index).concat(bishopValidArray(index));
+function queenValidArray(index,clr,uA){
+  validArray=[];
+  let validArrayReturn=rookValidArray(index,clr,null).concat(bishopValidArray(index,clr,null));
   return validArrayReturn;
 }
 
