@@ -374,8 +374,8 @@ function clickSquare(ind){
     }
     console.log(oppKingVA.length);
     if(oppKingVA.length==0 && notTrivialCheck==1){
-      if(turn==w){note.textContent="Black wins. Resfresh page to play again."}
-      else if(turn==b){note.textContent="White wins. Resfresh page to play again."}
+      if(turn==w){note.textContent="Black wins. Refresh page to play again."}
+      else if(turn==b){note.textContent="White wins. Refresh page to play again."}
       gameOn=0;
     }
   }
