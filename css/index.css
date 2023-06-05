@@ -1,6 +1,7 @@
 body{
   margin: 0;
   text-align: center;
+  user-select:none;
 }
 #d1{
   display:flex;

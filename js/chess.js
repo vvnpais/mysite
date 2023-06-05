@@ -1,53 +1,73 @@
 document.addEventListener('DOMContentLoaded',()=>{
-  const squares=document.querySelectorAll('.grid div');
-  const pbpawn=document.querySelector('#pbpawn');
-  const pbrook=document.querySelector('#pbrook');
-  const pbknight=document.querySelector('#pbknight');
-  const pbbishop=document.querySelector('#pbbishop');
-  const pbqueen=document.querySelector('#pbqueen');
-  const pbking=document.querySelector('#pbking');
-  const pwpawn=document.querySelector('#pwpawn');
-  const pwrook=document.querySelector('#pwrook');
-  const pwknight=document.querySelector('#pwknight');
-  const pwbishop=document.querySelector('#pwbishop');
-  const pwqueen=document.querySelector('#pwqueen');
-  const pwking=document.querySelector('#pwking');
-  const width=8;
-  let validArray=[];
-  let turn="w";
-  let currentHighlightIndex=null;
-  let firstClickIndex=null;
-  let secondClickIndex=null;
-  let tempForClassList=null;
-  const whiteArray=[];
-  const blackArray=[];
 
+const squares=document.querySelectorAll('.grid div');
+const pbp=document.querySelector('#pbpawn');
+const pbr=document.querySelector('#pbrook');
+const pbkn=document.querySelector('#pbknight');
+const pbb=document.querySelector('#pbbishop');
+const pbq=document.querySelector('#pbqueen');
+const pbk=document.querySelector('#pbking');
+const pwp=document.querySelector('#pwpawn');
+const pwr=document.querySelector('#pwrook');
+const pwkn=document.querySelector('#pwknight');
+const pwb=document.querySelector('#pwbishop');
+const pwq=document.querySelector('#pwqueen');
+const pwk=document.querySelector('#pwking');
+let w="w",b="b",yy='yy',rr='rr',turn=w,fci=null,sci=null,width=8,green='green',none='none';
+let pc=['bpawn','brook','bknight','bbishop','bqueen','bking',
+'wpawn','wrook','wknight','wbishop','wqueen','wking']
+let va=null;
+// fci=firstClickIndex, sci=secondClickIndex, pc=pieceClasses, va=validArray, cc=cartesianCoordinates
 
-  for(let i=0;i<squares.length;i++){
-    if(i%16>7){
-      if(i%2===0){
-        squares[i].classList.add('purple');
-      }else{
-        squares[i].classList.add('white');
-      }
-    }else{
-      if(i%2===1){
-        squares[i].classList.add('purple');
-      }else{
-        squares[i].classList.add('white');
-      }
+// helper functions
+
+function incPieceValue(name){
+  let count=name.textContent;
+  count=Number(count+1);
+  name.textContent=count;
+  return;
+}
+
+function updatePieceScore(name){
+  switch(name){
+    case 'bpawn': incPieceValue(pbp); break;
+    case 'brook': incPieceValue(pbr); break;
+    case 'bknight': incPieceValue(pbkn); break;
+    case 'bbishop': incPieceValue(pbb); break;
+    case 'bqueen': incPieceValue(pbq); break;
+    case 'bking': incPieceValue(pbk); break;
+    case 'wpawn': incPieceValue(pwp); break;
+    case 'wrook': incPieceValue(pwr); break;
+    case 'wknight': incPieceValue(pwkn); break;
+    case 'wbishop': incPieceValue(pwb); break;
+    case 'wqueen': incPieceValue(pwq); break;
+    case 'wking': incPieceValue(pwk); break;
+    default: break;
+  }
+}
+
+function togg(obj,classname){
+  obj.classList.toggle(classname);
+}
+
+function whichPiece(index){
+  for(let i=0;i<12;i++){
+    if(squares[index].classList.contains(pc[i])){
+      return pc[i];
     }
   }
+  return none;
+}
 
-function indexToCartesian(i){
+function cart(i){
     let x=i%width+1;
     let y=8-((i-i%width)/width);
     return [x,y];
 }
 
-function cartesianToIndex([a,b]){
-    let answer=(8-b)*width+a-1;
-    return answer;
+function ind([a,b]){
+    let x=(8-b)*width+a-1;
+    return x;
 }
 
 function isValid([a,b]){
@@ -56,829 +76,217 @@ function isValid([a,b]){
   }else{return false;}
 }
 
-function stripArray(arrayInput){
-  let arrayReturn=[]
-  let array=[]
-  for(let i=0; i<arrayInput.length; i++){
-    array.push(indexToCartesian(arrayInput[i]));
-  }
-  for(let i=0;i<array.length;i++){
-    if(array[i][0]>0 && array[i][0]<9 && array[i][0]>0 && array[i][1]<9){
-      arrayReturn.push(cartesianToIndex(array[i]));
+function whichColor(index){
+  for(let i=0;i<12;i++){
+    if(squares[index].classList.contains(pc[i])){
+      if(i>5){
+        return w;
+      }
+      else{return b;}
     }
   }
-  return arrayReturn;
+  return none;
 }
 
-function highlight(a){
-    if(squares[a].classList.contains('bb')){
-      squares[a].classList.remove('bb');
-      squares[a].classList.add('yy');
-    }else if(squares[a].classList.contains('yy')){
-      squares[a].classList.remove('yy');
-      squares[a].classList.add('bb');
+function isOpp(color,index){
+  if(index==null){return false;}
+  if(color==w && whichColor(index)==b){
+    return true;
+  }
+  else if(color==b && whichColor(index)==w){
+    return true;
+  }
+  return false;
+}
+
+function isSame(color,index){
+  if(index==null){return false;}
+  if(color==w && whichColor(index)==w){
+    return true;
+  }
+  else if(color==b && whichColor(index)==b){
+    return true;
+  }
+  return false;
+}
+
+function isEmpty(index){
+  if(index==null){return false;}
+  for(let i=0;i<12;i++){
+    if(squares[index].classList.contains(pc[i])){
+      return false;
     }
+  }
+  return true;
 }
 
-function highlightValidArray(chck){
-    if(chck===0){
-      for(let i=0;i<squares.length;i++){
-        squares[i].classList.remove('green');
+function genValidArray(piece,index){
+  let validArray=[], pieceColor=whichColor(index);
+
+  if(piece=='bpawn' || piece=='wpawn'){
+    let cc=cart(index);
+      if(isValid([cc[0],cc[1]+1]) && isEmpty(ind([cc[0],cc[1]+1]))){
+        validArray.push(ind([cc[0],cc[1]+1]));
+      }
+      if(isValid([cc[0]+1,cc[1]+1]) && isOpp(pieceColor,ind([cc[0]+1,cc[1]+1]))){
+        validArray.push(ind([cc[0]+1,cc[1]+1]));
+      }
+      if(isValid([cc[0]-1,cc[1]+1]) && isOpp(pieceColor,ind([cc[0]-1,cc[1]+1]))){
+        validArray.push(ind([cc[0]-1,cc[1]+1]));
+      }
+      if(index>47 && index<56){
+        if(isValid([cc[0],cc[1]+2]) && isEmpty(ind([cc[0],cc[1]+2]))){
+          validArray.push(ind([cc[0],cc[1]+2]));
+        }
+      }
+  }
+
+  else if(piece=='bknight' || piece=='wknight'){
+    let cc=cart(index);
+      knightArray=[ [cc[0]-1,cc[1]-2], [cc[0]-1,cc[1]+2], [cc[0]+1,cc[1]-2], [cc[0]+1,cc[1]+2],
+                    [cc[0]-2,cc[1]-1], [cc[0]-2,cc[1]+1], [cc[0]+2,cc[1]-1], [cc[0]+2,cc[1]+1] ]
+      for(let i=0;i<8;i++){
+        if(isValid(knightArray[i]) && !isSame(pieceColor,ind(knightArray[i]))){
+          validArray.push(ind(knightArray[i]));
+        }
+      }
+  }
+
+  else{
+    let cc=cart(index),direction=null,range=null;
+    if(piece=='brook' || piece=='wrook'){
+      direction=[[1,0],[0,1],[-1,0],[0,-1]]
+      range=7
+    }
+    else if(piece=='bbishop' || piece=='wbishop'){
+      direction=[[1,1],[-1,-1],[-1,1],[1,-1]]
+      range=7
+    }
+    else if(piece=='bqueen' || piece=='wqueen'){
+      direction=[[1,0],[0,1],[-1,0],[0,-1],[1,1],[-1,-1],[-1,1],[1,-1]]
+      range=7
+    }
+    else if(piece=='bking' || piece=='wking'){
+      direction=[[1,0],[0,1],[-1,0],[0,-1],[1,1],[-1,-1],[-1,1],[1,-1]]
+      range=1
+    }
+    for(let i=0;i<direction.length;i++){
+      let dd=direction[i];
+      for(let j=1;j<=range;j++){
+        if(isValid([cc[0]+(dd[0]*j),cc[1]+(dd[1]*j)])){
+          if(isSame(pieceColor,ind([cc[0]+(dd[0]*j),cc[1]+(dd[1]*j)]))){
+            break;
+          }
+          validArray.push(ind([cc[0]+(dd[0]*j),cc[1]+(dd[1]*j)]));
+          if(isOpp(pieceColor,ind([cc[0]+(dd[0]*j),cc[1]+(dd[1]*j)]))){
+            break;
+          }
+        }
       }
     }
-    else if(chck===1){
-      for(let i=0;i<validArray.length;i++){
-        squares[validArray[i]].classList.add('green');
-      }
-    }
-}
-
-function addImage(i,abc){
-  if(abc[0]==='w'){
-    whiteArray.push(i);
   }
-  else if(abc[0]==='b'){
-    blackArray.push(i);
+
+
+  return validArray;
+}
+
+// helper functions end
+
+//initiation of board starts
+for(let i=0;i<64;i++){
+  if(i%2==0){
+    if(i%16>7){squares[i].classList.add('purple');}
+    else{squares[i].classList.add('white');}
   }
-  if(squares[i].classList.contains(abc)){
-    squares[i].classList.remove(abc);
-  }else{
-  squares[i].classList.add(abc);
-  }
+  else if(i%2==1){
+    if(i%16>7){squares[i].classList.add('white');}
+    else{squares[i].classList.add('purple');}  }
 }
 
-function black(index){
-  if(blackArray.includes(index)){return true;}
-else{return false;}
+function initPiece(num,piece){
+  squares[num].classList.add(piece);
 }
-function white(index){
-  if(whiteArray.includes(index)){return true;}
-else{return false;}
+let initNum=[00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,
+             48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]
+let initPieceArray=['brook','bknight','bbishop','bqueen','bking','bbishop','bknight','brook',
+                'bpawn','bpawn','bpawn','bpawn','bpawn','bpawn','bpawn','bpawn',
+                'wpawn','wpawn','wpawn','wpawn','wpawn','wpawn','wpawn','wpawn',
+                'wrook','wknight','wbishop','wqueen','wking','wbishop','wknight','wrook']
+for(let i=0;i<32;i++){
+  initPiece(initNum[i],initPieceArray[i]);
 }
+// init ends
 
-function empty(index){
-  if( black(index) || white(index) ){
-    return false;
-  }
-  else{return true;}
-}
-
-function whichImage(index){
-  switch(true){
-    case squares[index].classList.contains('bpawn'):
-    return 'bpawn';
-    break;
-    case squares[index].classList.contains('brook'):
-    return 'brook';
-    break;
-    case squares[index].classList.contains('bknight'):
-    return 'bknight';
-    break;
-    case squares[index].classList.contains('bbishop'):
-    return 'bbishop';
-    break;
-    case squares[index].classList.contains('bqueen'):
-    return 'bqueen';
-    break;
-    case squares[index].classList.contains('bking'):
-    return 'bking';
-    break;
-    case squares[index].classList.contains('wpawn'):
-    return 'wpawn';
-    break;
-    case squares[index].classList.contains('wrook'):
-    return 'wrook';
-    break;
-    case squares[index].classList.contains('wknight'):
-    return 'wknight';
-    break;
-    case squares[index].classList.contains('wbishop'):
-    return 'wbishop';
-    break;
-    case squares[index].classList.contains('wqueen'):
-    return 'wqueen';
-    break;
-    case squares[index].classList.contains('wking'):
-    return 'wking';
-    break;
-  }
-}
-
-function startPositions(){
-addImage(0,'brook');
-addImage(1,'bknight');
-addImage(2,'bbishop');
-addImage(3,'bqueen');
-addImage(4,'bking');
-addImage(5,'bbishop');
-addImage(6,'bknight');
-addImage(7,'brook');
-addImage(8,'bpawn');
-addImage(9,'bpawn');
-addImage(10,'bpawn');
-addImage(11,'bpawn');
-addImage(12,'bpawn');
-addImage(13,'bpawn');
-addImage(14,'bpawn');
-addImage(15,'bpawn');
-addImage(48,'wpawn');
-addImage(49,'wpawn');
-addImage(50,'wpawn');
-addImage(51,'wpawn');
-addImage(52,'wpawn');
-addImage(53,'wpawn');
-addImage(54,'wpawn');
-addImage(55,'wpawn');
-addImage(56,'wrook');
-addImage(57,'wknight');
-addImage(58,'wbishop');
-addImage(59,'wqueen');
-addImage(60,'wking');
-addImage(61,'wbishop');
-addImage(62,'wknight');
-addImage(63,'wrook');
-}
-
-startPositions();
-
+// rotateBoard function
 function rotateBoard(){
-  let prevIndex=[]
-  for(let i=0; i<squares.length; i++){
-    prevIndex[i]=squares[i].classList.value;
+  for(let i=0;i<32;i++){
+    let tem=squares[i].classList.value;
+    squares[i].classList=squares[63-i].classList.value;
+    squares[63-i].classList=tem;
   }
-  for(let i=0; i<squares.length; i++){
-    squares[i].classList=prevIndex[squares.length-1-i];
-  }
-  for(let i=0 ; i<16; i++){
-    whiteArray[i]=63-whiteArray[i];
-    blackArray[i]=63-blackArray[i];
-  }
-  validArray=[]
-  highlightValidArray(0);
 }
 
+//testButton
+// const bt=document.querySelector('#button');
+// bt.addEventListener('click',rotateBoard);
 
-
-for(let i=0; i<squares.length; i++){
-  squares[i].addEventListener('click',()=>{
-    if(firstClickIndex==null){
-    firstClickIndex=i;
-    firstClick();}
-
+function clickSquare(i){
+  if(fci==null){
+    fci=i;
+    sci=null;
+    // check if correct piece clicked
+    if(whichColor(i)!=turn){fci=null;}
     else{
-      secondClickIndex=i;
-      secondClick();}
-  })
-}
 
-let castling=0;
+    va=genValidArray(whichPiece(i),i);
 
-// function underAttack(index,abc){
-//       let result=false;
-//   if(abc==="w"){
-//     whiteArray.push(index);
-//     for(let i=0;i<blackArray.length;i++){
-//       let card1=whichImage(blackArray[i]);
-//       if(card1==="bpawn"){
-//         if(pawnValidArray(blackArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       else if(card1==="brook"){
-//         if(rookValidArray(blackArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="bknight"){
-//         if(knightValidArray(blackArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="bbishop"){
-//         if(bishopValidArray(blackArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="bqueen"){
-//         if(queenValidArray(blackArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="bking"){
-//         if(kingValidArray(blackArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//     }
-//     let temp=whiteArray.indexOf(index);
-//     whiteArray.splice(temp,1);
-//   }
-//   if(abc==="b"){
-//     blackArray.push(index);
-//     for(let i=0;i<whiteArray.length;i++){
-//       let card1=whichImage(whiteArray[i]);
-//       if(card1==="wpawn"){
-//         if(pawnValidArray(whiteArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       else if(card1==="wrook"){
-//         if(rookValidArray(whiteArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="wknight"){
-//         if(knightValidArray(whiteArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="wbishop"){
-//         if(bishopValidArray(whiteArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="wqueen"){
-//         if(queenValidArray(whiteArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//       if(card1==="wking"){
-//         if(kingValidArray(whiteArray[i]).includes(index)){
-//           result=true;
-//         }
-//       }
-//     }
-//     let temp=blackArray.indexOf(index);
-//     blackArray.splice(temp,1);
-//   }
-//   return result;
-// }
+    // set valid array to green
+      for(let i=0;i<va.length;i++){
+        togg(squares[va[i]],green);
+      }
+      togg(squares[i],green);
 
 
-function firstClick(){
-  if(turn==="w"){
-    if(whiteArray.includes(firstClickIndex)){
-      turn="b";
-      if(currentHighlightIndex!=null){
-       highlight(currentHighlightIndex);
-       currentHighlightIndex=null;}
-      highlight(firstClickIndex);
-      currentHighlightIndex=firstClickIndex;
-      updateValidArray(currentHighlightIndex);
     }
-  }else if(turn==="b"){
-    if(blackArray.includes(firstClickIndex)){
-    turn="w";
-    if(currentHighlightIndex!=null){
-       highlight(currentHighlightIndex);
-       currentHighlightIndex=null;}
-      highlight(firstClickIndex);
-      currentHighlightIndex=firstClickIndex;
-      updateValidArray(currentHighlightIndex);
-  }
-}
-// console.log(validArray);
-highlightValidArray(1);
-}
-
-function updateValidArray(index){
-  validArray=[];
-      switch(true){
-        case squares[index].classList.contains('bpawn'):
-          validArray=pawnValidArray(index,"b",null);
-          break;
-        case squares[index].classList.contains('brook'):
-          validArray=rookValidArray(index,"b",null);
-          break;
-        case squares[index].classList.contains('bknight'):
-          validArray=knightValidArray(index,"b",null);
-          break;
-        case squares[index].classList.contains('bbishop'):
-          validArray=bishopValidArray(index,"b",null);
-          break;
-        case squares[index].classList.contains('bqueen'):
-          validArray=queenValidArray(index,"b",null);
-          break;
-        case squares[index].classList.contains('bking'):
-          validArray=kingValidArray(index,"b",null);
-          break;
-        case squares[index].classList.contains('wpawn'):
-          validArray=pawnValidArray(index,"w",null);
-          break;
-        case squares[index].classList.contains('wrook'):
-          validArray=rookValidArray(index,"w",null);
-          break;
-        case squares[index].classList.contains('wknight'):
-          validArray=knightValidArray(index,"w",null);
-          break;
-        case squares[index].classList.contains('wbishop'):
-          validArray=bishopValidArray(index,"w",null);
-          break;
-        case squares[index].classList.contains('wqueen'):
-          validArray=queenValidArray(index,"w",null);
-          break;
-        case squares[index].classList.contains('wking'):
-          validArray=kingValidArray(index,"w",null);
-          break;
-      }
-}
-
-function pawnValidArray(index,clr,uA){
-  validArray=[];
-  let validArrayReturn=[]
-  let cart=indexToCartesian(index);
-  let x=cart[0];
-  let y=cart[1];
-  if(index<56 && index>47){
-    if(empty(cartesianToIndex([x,y+2]))){
-      validArrayReturn.push(cartesianToIndex([x,y+2]));
-    }
-  }
-  if(clr==="w"){
-    if(uA!=null){
-      blackArray.push(uA);
-    }
-    if( isValid([x,y+1]) && empty(cartesianToIndex([x,y+1])) ){
-      validArrayReturn.push(cartesianToIndex([x,y+1]));
-    }
-    if( isValid([x+1,y+1]) && black(cartesianToIndex([x+1,y+1])) ) {
-      validArrayReturn.push(cartesianToIndex([x+1,y+1]));
-    }
-    if( isValid([x-1,y+1]) && black(cartesianToIndex([x-1,y+1])) ){
-      validArrayReturn.push(cartesianToIndex([x-1,y+1]));
-    }
-    if(uA!=null){
-    blackArray.pop();
-    }
-  }
-  if(clr==="b"){
-    if(uA!=null){
-      whiteArray.push(uA);
-    }
-    if( isValid([x,y+1]) && empty(cartesianToIndex([x,y+1])) ){
-      validArrayReturn.push(cartesianToIndex([x,y+1]));
-    }
-    if( isValid([x+1,y+1]) && white(cartesianToIndex([x+1,y+1])) ){
-      validArrayReturn.push(cartesianToIndex([x+1,y+1]));
-    }
-    if( isValid([x-1,y+1]) && white(cartesianToIndex([x-1,y+1])) ){
-      validArrayReturn.push(cartesianToIndex([x-1,y+1]));
-    }
-    if(uA!=null){
-      whiteArray.pop();
-    }
-  }
-  // console.log(whichImage(index)+stripArray(validArrayReturn));
-  return stripArray(validArrayReturn);
-}
-
-function rookValidArray(index,clr,uA){
-  validArray=[];
-  let validArrayReturn=[]
-  let cart=indexToCartesian(index);
-  let x=cart[0];
-  let y=cart[1];
-  if(clr==="w"){
-    if(uA!=null){
-      blackArray.push(uA);
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x,y+i]) && empty(cartesianToIndex([x,y+i]))){
-        validArrayReturn.push(cartesianToIndex([x,y+i]));
-      }else{
-        if( isValid([x,y+i]) && black(cartesianToIndex([x,y+i]))){
-          validArrayReturn.push(cartesianToIndex([x,y+i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x+i,y]) && empty(cartesianToIndex([x+i,y]))){
-        validArrayReturn.push(cartesianToIndex([x+i,y]));
-      }else{
-        if( isValid([x+i,y]) && black(cartesianToIndex([x+i,y]))){
-          validArrayReturn.push(cartesianToIndex([x+i,y]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x,y-i]) && empty(cartesianToIndex([x,y-i]))){
-        validArrayReturn.push(cartesianToIndex([x,y-i]));
-      }else{
-        if( isValid([x,y-i]) && black(cartesianToIndex([x,y-i]))){
-          validArrayReturn.push(cartesianToIndex([x,y-i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x-i,y]) && empty(cartesianToIndex([x-i,y]))){
-        validArrayReturn.push(cartesianToIndex([x-i,y]));
-      }else{
-        if( isValid([x-i,y]) && black(cartesianToIndex([x-i,y]))){
-          validArrayReturn.push(cartesianToIndex([x-i,y]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    if(uA!=null){
-      blackArray.pop(uA);
-    }
-  }
-  if(clr==="b"){
-    if(uA!=null){
-      whiteArray.push(uA);
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x,y+i]) && empty(cartesianToIndex([x,y+i]))){
-        validArrayReturn.push(cartesianToIndex([x,y+i]));
-      }else{
-        if( isValid([x,y+i]) && white(cartesianToIndex([x,y+i]))){
-          validArrayReturn.push(cartesianToIndex([x,y+i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x+i,y]) && empty(cartesianToIndex([x+i,y]))){
-        validArrayReturn.push(cartesianToIndex([x+i,y]));
-      }else{
-        if( isValid([x+i,y]) && white(cartesianToIndex([x+i,y]))){
-          validArrayReturn.push(cartesianToIndex([x+i,y]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x,y-i]) && empty(cartesianToIndex([x,y-i]))){
-        validArrayReturn.push(cartesianToIndex([x,y-i]));
-      }else{
-        if( isValid([x,y-i]) && white(cartesianToIndex([x,y-i]))){
-          validArrayReturn.push(cartesianToIndex([x,y-i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x-i,y]) && empty(cartesianToIndex([x-i,y]))){
-        validArrayReturn.push(cartesianToIndex([x-i,y]));
-      }else{
-        if( isValid([x-i,y]) && white(cartesianToIndex([x-i,y]))){
-          validArrayReturn.push(cartesianToIndex([x-i,y]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    if(uA!=null){
-      whiteArray.pop();
-    }
-  }
-  return stripArray(validArrayReturn);
-}
-
-function bishopValidArray(index,clr,uA){
-  validArray=[];
-  let validArrayReturn=[]
-  let cart=indexToCartesian(index);
-  let x=cart[0];
-  let y=cart[1];
-  if(clr==="w"){
-    if(uA!=null){
-      blackArray.push(uA);
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x+i,y+i]) && empty(cartesianToIndex([x+i,y+i]))){
-        validArrayReturn.push(cartesianToIndex([x+i,y+i]));
-      }else{
-        if( isValid([x+i,y+i]) && black(cartesianToIndex([x+i,y+i]))){
-          validArrayReturn.push(cartesianToIndex([x+i,y+i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x+i,y-i]) && empty(cartesianToIndex([x+i,y-i]))){
-        validArrayReturn.push(cartesianToIndex([x+i,y-i]));
-      }else{
-        if( isValid([x+i,y-i]) && black(cartesianToIndex([x+i,y-i]))){
-          validArrayReturn.push(cartesianToIndex([x+i,y-i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x-i,y-i]) && empty(cartesianToIndex([x-i,y-i]))){
-        validArrayReturn.push(cartesianToIndex([x-i,y-i]));
-      }else{
-        if( isValid([x-i,y-i]) && black(cartesianToIndex([x-i,y-i]))){
-          validArrayReturn.push(cartesianToIndex([x-i,y-i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x-i,y+i]) && empty(cartesianToIndex([x-i,y+i]))){
-        validArrayReturn.push(cartesianToIndex([x-i,y+i]));
-      }else{
-        if( isValid([x-i,y+i]) && black(cartesianToIndex([x-i,y+i]))){
-          validArrayReturn.push(cartesianToIndex([x-i,y+i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    if(uA!=null){
-      whiteArray.pop();
-    }
-  }
-  if(clr==="b"){
-    if(uA!=null){
-      whiteArray.push(uA);
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x+i,y+i]) && empty(cartesianToIndex([x+i,y+i]))){
-        validArrayReturn.push(cartesianToIndex([x+i,y+i]));
-      }else{
-        if( isValid([x+i,y+i]) && white(cartesianToIndex([x+i,y+i]))){
-          validArrayReturn.push(cartesianToIndex([x+i,y+i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x+i,y-i]) && empty(cartesianToIndex([x+i,y-i]))){
-        validArrayReturn.push(cartesianToIndex([x+i,y-i]));
-      }else{
-        if( isValid([x+i,y-i]) && white(cartesianToIndex([x+i,y-i]))){
-          validArrayReturn.push(cartesianToIndex([x+i,y-i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x-i,y-i]) && empty(cartesianToIndex([x-i,y-i]))){
-        validArrayReturn.push(cartesianToIndex([x-i,y-i]));
-      }else{
-        if( isValid([x-i,y-i]) && white(cartesianToIndex([x-i,y-i]))){
-          validArrayReturn.push(cartesianToIndex([x-i,y-i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    for(let i=1;i<8;i++){
-      if( isValid([x-i,y+i]) && empty(cartesianToIndex([x-i,y+i]))){
-        validArrayReturn.push(cartesianToIndex([x-i,y+i]));
-      }else{
-        if( isValid([x-i,y+i]) && white(cartesianToIndex([x-i,y+i]))){
-          validArrayReturn.push(cartesianToIndex([x-i,y+i]));
-          break;
-        }
-        else{break;}
-      }
-    }
-    if(uA!=null){
-      whiteArray.pop();
-    }
-  }
-  return stripArray(validArrayReturn);
-}
-
-function knightValidArray(index,clr,uA){
-  validArray=[];
-  let validArrayReturn=[];
-  let cart=indexToCartesian(index);
-  let x=cart[0];
-  let y=cart[1];
-  let knightArray=[[x+1,y+2],[x+2,y+1],[x-1,y+2],[x-2,y+1],[x+1,y-2],[x+2,y-1],[x-1,y-2],[x-2,y-1]];
-  if(clr==="w"){
-    if(uA!=null){
-      blackArray.push(uA);
-    }
-  for(let i=0; i<knightArray.length; i++){
-    if( isValid(knightArray[i]) && !white(cartesianToIndex(knightArray[i])) ){
-      validArrayReturn.push(cartesianToIndex(knightArray[i]));
-    }
-  }
-  if(uA!=null){
-    blackArray.pop();
-  }
-  }
-  if(clr==="b"){
-    if(uA!=null){
-      whiteArray.push(uA);
-    }
-  for(let i=0; i<knightArray.length; i++){
-    if( isValid(knightArray[i]) && !black(cartesianToIndex(knightArray[i])) ){
-      validArrayReturn.push(cartesianToIndex(knightArray[i]));
-    }
-  }
-  if(uA!=null){
-    whiteArray.pop();
-  }
-  }
-  return stripArray(validArrayReturn);
-}
-function kingValidArray(index,clr,uA){
-  validArray=[];
-  let validArrayReturn=[]
-  let cart=indexToCartesian(index);
-  let x=cart[0];
-  let y=cart[1];
-  let kingArray=[[x+1,y],[x-1,y],[x,y+1],[x,y-1],[x-1,y-1],[x-1,y+1],[x+1,y-1],[x+1,y+1]];
-  if(clr==="w"){
-    if(uA!=null){
-      blackArray.push(uA);
-    }
-  for(let i=0; i<kingArray.length; i++){
-    if( isValid(kingArray[i]) && !white(cartesianToIndex(kingArray[i])) ){
-      validArrayReturn.push(cartesianToIndex(kingArray[i]));
-    }
-  }
-  if(uA!=null){
-    blackArray.pop();
-  }
-  }
-  if(clr==="b"){
-    if(uA!=null){
-      whiteArray.push(uA);
-    }
-  for(let i=0; i<kingArray.length; i++){
-    if( isValid(kingArray[i]) && !black(cartesianToIndex(kingArray[i])) ){
-      validArrayReturn.push(cartesianToIndex(kingArray[i]));
-    }
-  }
-  if(uA!=null){
-    whiteArray.pop();
-  }
-  }
-  return stripArray(validArrayReturn);
-}
-
-
-function queenValidArray(index,clr,uA){
-  validArray=[];
-  let validArrayReturn=rookValidArray(index,clr,null).concat(bishopValidArray(index,clr,null));
-  return validArrayReturn;
-}
-
-function secondClick(){
-  if(validArray.includes(secondClickIndex)){
-    let card=whichImage(currentHighlightIndex);
-    if(card==="bpawn" && secondClickIndex<8){
-      squares[currentHighlightIndex].classList.remove('bpawn');
-      squares[currentHighlightIndex].classList.add('bqueen');
-      card="bqueen";
-    }
-    if(card==="wpawn" && secondClickIndex<8){
-      squares[currentHighlightIndex].classList.remove('wpawn');
-      squares[currentHighlightIndex].classList.add('wqueen');
-      card="wqueen";
-    }
-    let temp4=null;
-    if(black(currentHighlightIndex)){
-      let temp=blackArray.indexOf(currentHighlightIndex);
-      blackArray.splice(temp,1);
-      blackArray.push(secondClickIndex);
-      if(white(secondClickIndex)){
-        let temp2=whiteArray.indexOf(secondClickIndex);
-        whiteArray.splice(temp2,1);
-        let temp3=whichImage(secondClickIndex);
-        switch(temp3){
-          case 'wpawn':
-          temp=pwpawn.innerHTML;
-          temp4++;
-          pwpawn.innerHTML=temp4;
-          break;
-          case 'wrook':
-          temp=pwrook.innerHTML;
-          temp4++;
-          pwrook.innerHTML=temp4;
-          break;
-          case 'wknight':
-          temp=pwknight.innerHTML;
-          temp4++;
-          pwknight.innerHTML=temp4;
-          break;
-          case 'wbishop':
-          temp=pwbishop.innerHTML;
-          temp4++;
-          pwbishop.innerHTML=temp4;
-          break;
-          case 'wqueen':
-          temp=pwqueen.innerHTML;
-          temp4++;
-          pwqueen.innerHTML=temp4;
-          break;
-          case 'wking':
-          temp=pwking.innerHTML;
-          temp4++;
-          pwking.innerHTML=temp4;
-          break;
-        }
-        squares[secondClickIndex].classList.remove(temp3);
-      }
-    }
-    if(white(currentHighlightIndex)){
-      let temp=whiteArray.indexOf(currentHighlightIndex);
-      whiteArray.splice(temp,1);
-      whiteArray.push(secondClickIndex);
-      if(black(secondClickIndex)){
-        let temp2=blackArray.indexOf(secondClickIndex);
-        blackArray.splice(temp2,1);
-        let temp3=whichImage(secondClickIndex);
-        switch(temp3){
-          case 'bpawn':
-          temp=pbpawn.innerHTML;
-          temp4++;
-          pbpawn.innerHTML=temp4;
-          break;
-          case 'brook':
-          temp=pbrook.innerHTML;
-          temp4++;
-          pbrook.innerHTML=temp4;
-          break;
-          case 'bknight':
-          temp=pbknight.innerHTML;
-          temp4++;
-          pbknight.innerHTML=temp4;
-          break;
-          case 'bbishop':
-          temp=pbbishop.innerHTML;
-          temp4++;
-          pbbishop.innerHTML=temp4;
-          break;
-          case 'bqueen':
-          temp=pbqueen.innerHTML;
-          temp4++;
-          pbqueen.innerHTML=temp4;
-          break;
-          case 'bking':
-          temp=pbking.innerHTML;
-          temp4++;
-          pbking.innerHTML=temp4;
-          break;
-      }
-        squares[secondClickIndex].classList.remove(temp3);
-      }
-
-    }
-    squares[currentHighlightIndex].classList.remove(card);
-    squares[secondClickIndex].classList.add(card);
-    highlight(currentHighlightIndex);
-    currentHighlightIndex=null;
-    secondClickIndex=null;
-    validArray=[];
-    firstClickIndex=null;
-    setTimeout(rotateBoard,1000);
   }
   else{
-    if(currentHighlightIndex!=null){
-      highlightValidArray(0);
-      if(turn==="w"){
-        turn="b";
-      }else{
-        turn="w";
+    sci=i;
+    // remove all green
+    for(let i=0;i<64;i++){
+      if(squares[i].classList.contains(green)){
+        squares[i].classList.remove(green);
       }
-    highlight(currentHighlightIndex);
-    currentHighlightIndex=null;}
-    firstClickIndex=null;
-    secondClickIndex=null;
-    validArray=[];
+    }
+
+    if(va.includes(sci)){
+      let sciPiece=whichPiece(sci);
+      if(sciPiece!=null){
+        updatePieceScore(sciPiece);
+        squares[sci].classList.remove(sciPiece);
+      }
+      let fciPiece=whichPiece(fci);
+      squares[fci].classList.remove(fciPiece);
+      squares[sci].classList.add(fciPiece);
+
+      rotateBoard();
+      if(turn==w){turn=b;}else{turn=w;}
+
+      // pawn promotion
+      for(let i=0;i<8;i++){
+        if(squares[i].classList.contains('bpawn')){
+          squares[i].classList.remove('bpawn');
+          squares[i].classList.add('bqueen');}
+        if(squares[i].classList.contains('wpawn')){
+          squares[i].classList.remove('wpawn');
+          squares[i].classList.add('wqueen');}
+      }
+    }
+
+    fci=null;
   }
 }
+for(let i=0;i<64;i++){
+  squares[i].addEventListener('click',()=>{clickSquare(i);});
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-});
+})
