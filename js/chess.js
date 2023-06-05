@@ -13,7 +13,9 @@ const pwkn=document.querySelector('#pwknight');
 const pwb=document.querySelector('#pwbishop');
 const pwq=document.querySelector('#pwqueen');
 const pwk=document.querySelector('#pwking');
-let w="w",b="b",yy='yy',rr='rr',turn=w,fci=null,sci=null,width=8,green='green',none='none';
+const note=document.querySelector('#note');
+let w="w",b="b",yy='yy',rr='rr',turn=w,fci=null,sci=null,width=8,green='green',red='red',none='none';
+let straight='straight',reverse='reverse',gameOn=1;
 let pc=['bpawn','brook','bknight','bbishop','bqueen','bking',
 'wpawn','wrook','wknight','wbishop','wqueen','wking']
 let va=null;
@@ -76,7 +78,12 @@ function isValid([a,b]){
   }else{return false;}
 }
 
+function opp(color){
+  if(color==b){return w;}else{return b;}
+}
+
 function whichColor(index){
+  if(index==null){return none;}
   for(let i=0;i<12;i++){
     if(squares[index].classList.contains(pc[i])){
       if(i>5){
@@ -120,23 +127,31 @@ function isEmpty(index){
   return true;
 }
 
-function genValidArray(piece,index){
+function genValidArray(piece,index,board){
   let validArray=[], pieceColor=whichColor(index);
 
   if(piece=='bpawn' || piece=='wpawn'){
     let cc=cart(index);
-      if(isValid([cc[0],cc[1]+1]) && isEmpty(ind([cc[0],cc[1]+1]))){
+      if(isValid([cc[0],cc[1]+1]) && isEmpty(ind([cc[0],cc[1]+1])) && board!=reverse){
         validArray.push(ind([cc[0],cc[1]+1]));
       }
-      if(isValid([cc[0]+1,cc[1]+1]) && isOpp(pieceColor,ind([cc[0]+1,cc[1]+1]))){
+      if(isValid([cc[0]+1,cc[1]+1]) && isOpp(pieceColor,ind([cc[0]+1,cc[1]+1])) && board!=reverse ){
         validArray.push(ind([cc[0]+1,cc[1]+1]));
       }
-      if(isValid([cc[0]-1,cc[1]+1]) && isOpp(pieceColor,ind([cc[0]-1,cc[1]+1]))){
+      if(isValid([cc[0]-1,cc[1]+1]) && isOpp(pieceColor,ind([cc[0]-1,cc[1]+1])) && board!=reverse){
         validArray.push(ind([cc[0]-1,cc[1]+1]));
       }
       if(index>47 && index<56){
         if(isValid([cc[0],cc[1]+2]) && isEmpty(ind([cc[0],cc[1]+2]))){
           validArray.push(ind([cc[0],cc[1]+2]));
+        }
+      }
+      if(board==reverse){
+        if(isValid([cc[0]+1,cc[1]-1]) && isEmpty(ind([cc[0]+1,cc[1]-1])) ){
+          validArray.push(ind([cc[0]+1,cc[1]-1]));
+        }
+        if(isValid([cc[0]-1,cc[1]-1]) && isEmpty(ind([cc[0]-1,cc[1]-1])) ){
+          validArray.push(ind([cc[0]-1,cc[1]-1]));
         }
       }
   }
@@ -186,8 +201,31 @@ function genValidArray(piece,index){
     }
   }
 
-
   return validArray;
+}
+
+function kingCheck(color,index){
+  if(color==w){
+    for(let i=0;i<64;i++){
+      if(whichColor(i)==b){
+        let kcArray=genValidArray(whichPiece(i),i,reverse);
+        if(kcArray.includes(index)){
+          return true;
+        }
+      }
+    }
+  }
+  else if(color==b){
+    for(let i=0;i<64;i++){
+      if(whichColor(i)==w){
+        let kcArray=genValidArray(whichPiece(i),i,reverse);
+        if(kcArray.includes(index)){
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }
 
 // helper functions end
@@ -230,27 +268,43 @@ function rotateBoard(){
 // const bt=document.querySelector('#button');
 // bt.addEventListener('click',rotateBoard);
 
-function clickSquare(i){
-  if(fci==null){
-    fci=i;
+function clickSquare(ind){
+  if(fci==null && gameOn==1){
+    fci=ind;
     sci=null;
     // check if correct piece clicked
-    if(whichColor(i)!=turn){fci=null;}
+    if(whichColor(ind)!=turn){fci=null;}
     else{
 
-    va=genValidArray(whichPiece(i),i);
+    va=genValidArray(whichPiece(ind),ind,straight);
+    if(whichPiece(ind)=='bking' || whichPiece(ind)=='wking'){
+      let spliceArray=[]
+      for(let j=0;j<va.length;j++){
+        if(kingCheck(whichColor(ind),va[j])){
+          spliceArray.push(va[j]);
+        }
+      }
+      for(let i=0;i<spliceArray.length;i++){
+        let tem=va.indexOf(spliceArray[i]);
+        va.splice(tem,1);
+      }
+
+    }
+
 
     // set valid array to green
       for(let i=0;i<va.length;i++){
         togg(squares[va[i]],green);
       }
-      togg(squares[i],green);
+      togg(squares[ind],green);
 
 
     }
   }
-  else{
-    sci=i;
+  else if(fci!=null && gameOn==1){
+    sci=ind;
+    let sciPiece=whichPiece(sci);
+    let fciPiece=whichPiece(fci);
     // remove all green
     for(let i=0;i<64;i++){
       if(squares[i].classList.contains(green)){
@@ -259,17 +313,18 @@ function clickSquare(i){
     }
 
     if(va.includes(sci)){
-      let sciPiece=whichPiece(sci);
       if(sciPiece!=null){
         updatePieceScore(sciPiece);
         squares[sci].classList.remove(sciPiece);
       }
-      let fciPiece=whichPiece(fci);
       squares[fci].classList.remove(fciPiece);
       squares[sci].classList.add(fciPiece);
 
+
+
       rotateBoard();
-      if(turn==w){turn=b;}else{turn=w;}
+      if(turn==w){turn=b; note.textContent="Turn of black."}
+      else{turn=w; note.textContent="Turn of white."}
 
       // pawn promotion
       for(let i=0;i<8;i++){
@@ -280,13 +335,55 @@ function clickSquare(i){
           squares[i].classList.remove('wpawn');
           squares[i].classList.add('wqueen');}
       }
+
+
     }
 
     fci=null;
+    // check for win
+    let oppKingIndex=null;
+    if(turn==w){
+      for(let i=0;i<64;i++){
+        if(whichPiece(i)=='wking'){
+          oppKingIndex=i;
+          break;
+        }
+      }
+    }
+    if(turn==b){
+      for(let i=0;i<64;i++){
+        if(whichPiece(i)=='bking'){
+          oppKingIndex=i;
+          break;
+        }
+      }
+    }
+
+    let oppKingVA=genValidArray(whichPiece(oppKingIndex),oppKingIndex,straight);
+    let spliceArray=[]
+    let notTrivialCheck=0;
+    for(let i=0;i<oppKingVA.length;i++){
+      if(kingCheck(turn,oppKingVA[i])){
+        spliceArray.push(oppKingVA[i]);
+        notTrivialCheck=1;
+      }
+    }
+    for(let i=0;i<spliceArray.length;i++){
+      let tem=oppKingVA.indexOf(spliceArray[i]);
+      oppKingVA.splice(tem,1);
+    }
+    console.log(oppKingVA.length);
+    if(oppKingVA.length==0 && notTrivialCheck==1){
+      if(turn==w){note.textContent="Black wins. Resfresh page to play again."}
+      else if(turn==b){note.textContent="White wins. Resfresh page to play again."}
+      gameOn=0;
+    }
   }
 }
 for(let i=0;i<64;i++){
-  squares[i].addEventListener('click',()=>{clickSquare(i);});
+    squares[i].addEventListener('click',()=>{clickSquare(i);});
 }
+
+
 
 })
