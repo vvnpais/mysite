@@ -388,10 +388,10 @@ function clickSquare(ind){
       let tem=oppKingVA.indexOf(spliceArray[i]);
       oppKingVA.splice(tem,1);
     }
-    console.log(oppKingVA.length);
     if(oppKingVA.length==0 && notTrivialCheck==1){
       if(turn==w){note.textContent="Black wins. Refresh page to play again."}
       else if(turn==b){note.textContent="White wins. Refresh page to play again."}
+      squares[oppKingIndex].classList.add(red);
       gameOn=0;
     }
     // check ends
