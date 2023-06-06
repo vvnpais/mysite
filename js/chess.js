@@ -272,24 +272,40 @@ function clickSquare(ind){
   if(fci==null && gameOn==1){
     fci=ind;
     sci=null;
+    let piece=whichPiece(ind);
+    let fciPieceColor=whichColor(ind);
+    let kingIndex=null;
+    if(fciPieceColor==w){
+      for(let i=0;i<64;i++){
+        if(squares[i].classList.contains('wking')){kingIndex=i; break;}
+      }
+    }
+    if(fciPieceColor==b){
+      for(let i=0;i<64;i++){
+        if(squares[i].classList.contains('bking')){kingIndex=i; break;}
+      }
+    }
     // check if correct piece clicked
     if(whichColor(ind)!=turn){fci=null;}
     else{
 
-    va=genValidArray(whichPiece(ind),ind,straight);
-    if(whichPiece(ind)=='bking' || whichPiece(ind)=='wking'){
-      let spliceArray=[]
-      for(let j=0;j<va.length;j++){
-        if(kingCheck(whichColor(ind),va[j])){
-          spliceArray.push(va[j]);
-        }
-      }
-      for(let i=0;i<spliceArray.length;i++){
-        let tem=va.indexOf(spliceArray[i]);
-        va.splice(tem,1);
-      }
+    va=genValidArray(piece,ind,straight);
 
+    // check if moving piece leads to check
+    let allowedIndex=[];
+    for(let i=0;i<va.length;i++){
+      squares[ind].classList.remove(piece);
+      let destPiece=whichPiece(va[i]);
+      if(destPiece!=none){squares[va[i]].classList.remove(destPiece);}
+      squares[va[i]].classList.add(piece);
+      if(piece=='wking' || piece=='bking'){kingIndex=va[i];}
+      if(!kingCheck(whichColor(kingIndex),kingIndex)){allowedIndex.push(va[i]);}
+      squares[va[i]].classList.remove(piece);
+      if(destPiece!=none){squares[va[i]].classList.add(destPiece);}
+      squares[ind].classList.add(piece);
+      if(piece=='wking' || piece=='bking'){kingIndex=ind;}
     }
+    va=allowedIndex;
 
 
     // set valid array to green
@@ -340,6 +356,7 @@ function clickSquare(ind){
     }
 
     fci=null;
+
     // check for win
     let oppKingIndex=null;
     if(turn==w){
@@ -358,7 +375,6 @@ function clickSquare(ind){
         }
       }
     }
-
     let oppKingVA=genValidArray(whichPiece(oppKingIndex),oppKingIndex,straight);
     let spliceArray=[]
     let notTrivialCheck=0;
@@ -378,6 +394,7 @@ function clickSquare(ind){
       else if(turn==b){note.textContent="White wins. Refresh page to play again."}
       gameOn=0;
     }
+    // check ends
   }
 }
 for(let i=0;i<64;i++){
