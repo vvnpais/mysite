@@ -25,7 +25,7 @@ let va=null;
 
 function incPieceValue(name){
   let count=name.textContent;
-  count=Number(count+1);
+  count=Number(count)+1;
   name.textContent=count;
   return;
 }
@@ -244,7 +244,7 @@ for(let i=0;i<64;i++){
 function initPiece(num,piece){
   squares[num].classList.add(piece);
 }
-let initNum=[00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,
+let initNum=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
              48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]
 let initPieceArray=['brook','bknight','bbishop','bqueen','bking','bbishop','bknight','brook',
                 'bpawn','bpawn','bpawn','bpawn','bpawn','bpawn','bpawn','bpawn',
@@ -337,11 +337,6 @@ function clickSquare(ind){
       squares[sci].classList.add(fciPiece);
 
 
-
-      rotateBoard();
-      if(turn==w){turn=b; note.textContent="Turn of black."}
-      else{turn=w; note.textContent="Turn of white."}
-
       // pawn promotion
       for(let i=0;i<8;i++){
         if(squares[i].classList.contains('bpawn')){
@@ -351,6 +346,11 @@ function clickSquare(ind){
           squares[i].classList.remove('wpawn');
           squares[i].classList.add('wqueen');}
       }
+
+      setTimeout(()=>{
+      rotateBoard();
+      if(turn==w){turn=b; note.textContent="Turn of black."}
+      else{turn=w; note.textContent="Turn of white."}},700);
 
 
     }
