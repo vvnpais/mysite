@@ -127,7 +127,8 @@ function isEmpty(index){
   return true;
 }
 
-function genValidArray(piece,index,board){
+function genValidArray(index,board){
+  let piece=whichPiece(index);
   let validArray=[], pieceColor=whichColor(index);
 
   if(piece=='bpawn' || piece=='wpawn'){
@@ -141,16 +142,16 @@ function genValidArray(piece,index,board){
       if(isValid([cc[0]-1,cc[1]+1]) && isOpp(pieceColor,ind([cc[0]-1,cc[1]+1])) && board!=reverse){
         validArray.push(ind([cc[0]-1,cc[1]+1]));
       }
-      if(index>47 && index<56){
+      if(index>47 && index<56 && board==straight){
         if(isValid([cc[0],cc[1]+2]) && isEmpty(ind([cc[0],cc[1]+2]))){
           validArray.push(ind([cc[0],cc[1]+2]));
         }
       }
       if(board==reverse){
-        if(isValid([cc[0]+1,cc[1]-1]) && isEmpty(ind([cc[0]+1,cc[1]-1])) ){
+        if(isValid([cc[0]+1,cc[1]-1]) && isOpp(opp(whichColor(index)),ind([cc[0]+1,cc[1]-1])) ){
           validArray.push(ind([cc[0]+1,cc[1]-1]));
         }
-        if(isValid([cc[0]-1,cc[1]-1]) && isEmpty(ind([cc[0]-1,cc[1]-1])) ){
+        if(isValid([cc[0]-1,cc[1]-1]) && isOpp(opp(whichColor(index)),ind([cc[0]-1,cc[1]-1])) ){
           validArray.push(ind([cc[0]-1,cc[1]-1]));
         }
       }
@@ -204,27 +205,17 @@ function genValidArray(piece,index,board){
   return validArray;
 }
 
-function kingCheck(color,index){
-  if(color==w){
+function kingCheck(index,board=reverse){
+  // console.log("all");
     for(let i=0;i<64;i++){
-      if(whichColor(i)==b){
-        let kcArray=genValidArray(whichPiece(i),i,reverse);
+      if(whichColor(i)==opp(whichColor(index))){
+        let kcArray=genValidArray(i,board);
+        // console.log(whichPiece(i),index,whichPiece(index),kcArray);
         if(kcArray.includes(index)){
           return true;
         }
       }
     }
-  }
-  else if(color==b){
-    for(let i=0;i<64;i++){
-      if(whichColor(i)==w){
-        let kcArray=genValidArray(whichPiece(i),i,reverse);
-        if(kcArray.includes(index)){
-          return true;
-        }
-      }
-    }
-  }
   return false;
 }
 
@@ -289,7 +280,7 @@ function clickSquare(ind){
     if(whichColor(ind)!=turn){fci=null;}
     else{
 
-    va=genValidArray(piece,ind,straight);
+    va=genValidArray(ind,straight);
 
     // check if moving piece leads to check
     let allowedIndex=[];
@@ -299,7 +290,7 @@ function clickSquare(ind){
       if(destPiece!=none){squares[va[i]].classList.remove(destPiece);}
       squares[va[i]].classList.add(piece);
       if(piece=='wking' || piece=='bking'){kingIndex=va[i];}
-      if(!kingCheck(whichColor(kingIndex),kingIndex)){allowedIndex.push(va[i]);}
+      if(!kingCheck(kingIndex)){allowedIndex.push(va[i]);}
       squares[va[i]].classList.remove(piece);
       if(destPiece!=none){squares[va[i]].classList.add(destPiece);}
       squares[ind].classList.add(piece);
@@ -336,7 +327,6 @@ function clickSquare(ind){
       squares[fci].classList.remove(fciPiece);
       squares[sci].classList.add(fciPiece);
 
-
       // pawn promotion
       for(let i=0;i<8;i++){
         if(squares[i].classList.contains('bpawn')){
@@ -347,54 +337,88 @@ function clickSquare(ind){
           squares[i].classList.add('wqueen');}
       }
 
+      //checking for win
+      let oppKingIndex=null;
+      let attackingPieces=[];
+      for(let i=0;i<64;i++){
+        if(turn==w && whichPiece(i)=='bking'){oppKingIndex=i;break;}
+        else if(turn==b && whichPiece(i)=='wking'){oppKingIndex=i;break;}
+      }
+      let oppKingValArray=genValidArray(oppKingIndex,reverse);
+      for(let i=0;i<64;i++){
+        if(whichColor(i)==turn){
+          let isAttackingPiece=0;
+          let kcArray=genValidArray(i,straight);
+          for(let j=0;j<kcArray.length;j++){
+              if(oppKingValArray.includes(kcArray[j])){
+                let matchIndexInOppKingValArray=oppKingValArray.indexOf(kcArray[i]);
+                oppKingValArray.splice(matchIndexInOppKingValArray,1);
+                isAttackingPiece=1;
+              }
+          }
+          if(isAttackingPiece==1){attackingPieces.push(i);}
+        }
+      }
+      let canDefend=true;
+      // we have attacking pieces now we have to check if opponent can defend or not
+      if(attackingPieces.length>0){
+      canDefend=false;
+      for(let i=0;i<64;i++){
+        if(whichColor(i)==opp(turn)){
+          let oppPiece=whichPiece(i);
+          let oppVA=genValidArray(i,reverse);
+          for(let j=0;j<oppVA.length;j++){
+            let oppVAPiece=null;
+              squares[i].classList.remove(oppPiece);
+              if(!isEmpty(oppVA[j])){
+              oppVAPiece=whichPiece(oppVA[j]);
+              squares[oppVA[j]].classList.remove(oppVAPiece);}
+              squares[oppVA[j]].classList.add(oppPiece);
+              let oppKingIndexInner=null;
+              for(let i1=0;i1<64;i1++){
+                if(turn==w && whichPiece(i1)=='bking'){oppKingIndexInner=i1;break;}
+                else if(turn==b && whichPiece(i1)=='wking'){oppKingIndexInner=i1;break;}
+              }
+              if(!kingCheck(oppKingIndexInner)){
+                canDefend=true;
+                console.log(oppPiece,oppVA[j],i,oppKingIndexInner,whichColor(oppKingIndexInner),kingCheck(oppKingIndexInner));
+              }
+              squares[i].classList.add(oppPiece);
+              if(oppVAPiece!=null){
+              squares[oppVA[j]].classList.add(oppVAPiece);}
+              squares[oppVA[j]].classList.remove(oppPiece);
+              if(canDefend){break;}
+          }
+        }
+        if(canDefend){break;}
+      }
+    }
+      console.log(oppKingValArray,attackingPieces);
+      let condition=oppKingValArray.length==0 && kingCheck(oppKingIndex,straight) && !canDefend;
+      // console.log(oppKingValArray,kingCheck(oppKingIndex,straight));
+      if(condition){
+        if(turn==w){note.textContent="White wins. Refresh page to play again.";}
+        else if(turn==b){note.textContent="Black wins. Refresh page to play again.";}
+        gameOn=0;
+        squares[oppKingIndex].classList.add('red');
+      }else if(kingCheck(oppKingIndex,straight)){
+        setTimeout(()=>{
+        rotateBoard();
+        if(turn==w){turn=b; note.textContent="Turn of black. Black is in check."}
+        else{turn=w; note.textContent="Turn of white. White is in check."}},500);
+      }
+      else{
       setTimeout(()=>{
       rotateBoard();
       if(turn==w){turn=b; note.textContent="Turn of black."}
-      else{turn=w; note.textContent="Turn of white."}},700);
-
+      else{turn=w; note.textContent="Turn of white."}},500);
 
     }
 
+
+    }
     fci=null;
 
-    // check for win
-    let oppKingIndex=null;
-    if(turn==w){
-      for(let i=0;i<64;i++){
-        if(whichPiece(i)=='wking'){
-          oppKingIndex=i;
-          break;
-        }
-      }
-    }
-    if(turn==b){
-      for(let i=0;i<64;i++){
-        if(whichPiece(i)=='bking'){
-          oppKingIndex=i;
-          break;
-        }
-      }
-    }
-    let oppKingVA=genValidArray(whichPiece(oppKingIndex),oppKingIndex,straight);
-    let spliceArray=[]
-    let notTrivialCheck=0;
-    for(let i=0;i<oppKingVA.length;i++){
-      if(kingCheck(turn,oppKingVA[i])){
-        spliceArray.push(oppKingVA[i]);
-        notTrivialCheck=1;
-      }
-    }
-    for(let i=0;i<spliceArray.length;i++){
-      let tem=oppKingVA.indexOf(spliceArray[i]);
-      oppKingVA.splice(tem,1);
-    }
-    if(oppKingVA.length==0 && notTrivialCheck==1){
-      if(turn==w){note.textContent="Black wins. Refresh page to play again."}
-      else if(turn==b){note.textContent="White wins. Refresh page to play again."}
-      squares[oppKingIndex].classList.add(red);
-      gameOn=0;
-    }
-    // check ends
   }
 }
 for(let i=0;i<64;i++){
