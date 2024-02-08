@@ -1,0 +1,130 @@
+body{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    padding-top: 1rem;
+}
+.buttons{
+    padding: 0;
+    display: inline-flex;
+    width: 750px;
+    margin: 0;
+    margin-bottom: 1rem;
+    /* border: 1px black solid; */
+}
+.button{
+    margin: 0 10%;
+    width: 30%;
+    height: 2rem;
+    font-size: 1.75rem;
+    border: 1px black solid;
+    background-color: antiquewhite;
+}
+#endButton{
+    display: inline-block;
+    margin: 0 ;
+    margin-top: 1rem;
+    width: 20rem;
+    font-size: 1.75rem;
+    border: 1px black solid;
+    background-color: antiquewhite;
+}
+.grid{
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    flex-wrap: wrap;
+    width:705px;
+    height:705px;
+    border: 5px black solid;
+  }
+  .a{
+    background-color: lightgreen;
+    width:75px;
+    height:75px;
+    margin: 0;
+    padding: 0;
+    border: 1px black solid;
+    text-align: center;
+    
+    font-size: 4.25rem;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: auto;
+  }
+
+.grid div:nth-child(3n){
+    border-right: 3px black solid;
+}
+.grid div:nth-child(3n+1){
+    border-left: 3px black solid;
+}
+.grid div:nth-child(19),
+.grid div:nth-child(20),
+.grid div:nth-child(21),
+.grid div:nth-child(22),
+.grid div:nth-child(23),
+.grid div:nth-child(24),
+.grid div:nth-child(25),
+.grid div:nth-child(26),
+.grid div:nth-child(27),
+.grid div:nth-child(46),
+.grid div:nth-child(47),
+.grid div:nth-child(48),
+.grid div:nth-child(49),
+.grid div:nth-child(50),
+.grid div:nth-child(51),
+.grid div:nth-child(52),
+.grid div:nth-child(53),
+.grid div:nth-child(54),
+.grid div:nth-child(73),
+.grid div:nth-child(74),
+.grid div:nth-child(75),
+.grid div:nth-child(76),
+.grid div:nth-child(77),
+.grid div:nth-child(78),
+.grid div:nth-child(79),
+.grid div:nth-child(80),
+.grid div:nth-child(81)
+{
+    border-bottom: 3px black solid;
+}
+
+.grid div:nth-child(1),
+.grid div:nth-child(2),
+.grid div:nth-child(3),
+.grid div:nth-child(4),
+.grid div:nth-child(5),
+.grid div:nth-child(6),
+.grid div:nth-child(7),
+.grid div:nth-child(8),
+.grid div:nth-child(9),
+.grid div:nth-child(28),
+.grid div:nth-child(29),
+.grid div:nth-child(30),
+.grid div:nth-child(31),
+.grid div:nth-child(32),
+.grid div:nth-child(33),
+.grid div:nth-child(34),
+.grid div:nth-child(35),
+.grid div:nth-child(36),
+.grid div:nth-child(55),
+.grid div:nth-child(56),
+.grid div:nth-child(57),
+.grid div:nth-child(58),
+.grid div:nth-child(59),
+.grid div:nth-child(60),
+.grid div:nth-child(61),
+.grid div:nth-child(62),
+.grid div:nth-child(63)
+{
+    border-top: 3px black solid;
+}
+
+.yellow{
+    background-color: yellow;
+}
+
+.selectedButton{
+    box-shadow: 0px 0px 0px 10px red;
+}
