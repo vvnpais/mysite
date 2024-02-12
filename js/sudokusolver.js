@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     let game=Array(81).fill(0);
     let order=[];
     let randomisation=0.1;
+    let timedUpdateInterval=null;
+    let orderForDisplay=null;
+    let notWrong=0;
 
     //move higlight through touchpad and click
     for(let i=0;i<81;i++){
@@ -52,7 +55,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
 
     //endButton
-    endButton.addEventListener("click",()=>{endButton.textContent="Solving";solveGame();});
+    endButton.addEventListener("click",()=>{solveGame();});
     
     //move highlight with keyboard
     document.addEventListener("keydown",(e)=>{moveHighlight(e)});
@@ -101,6 +104,10 @@ document.addEventListener('DOMContentLoaded',()=>{
         }
     }
 
+    function toggleInputColor(i,n){
+        if(n==0){s[i].classList.remove("darkgreen");}
+        else if(n==1){s[i].classList.add("darkgreen");}
+    }
 
 ////////////////////////////////
 
@@ -170,12 +177,14 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(e!=0){
             s[i].textContent=Number(e);
             game[i]=Number(e);
+            toggleInputColor(i,1);
             // console.log(safe(clickIndex));
             // console.log(game);
-            if(!safe(i)){endButton.removeEventListener("click",solveGame); 
+            if(!safe(i)){notWrong=1; 
             endButton.textContent="Wrong Input. Refresh page to try again.";}
         }
         else{
+            toggleInputColor(i,0);
             s[i].textContent="";
             game[i]=0;
         }
@@ -186,12 +195,14 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(inputs.includes(e.code)){
             s[i].textContent=Number(e.key);
             game[i]=Number(e.key);
-            if(!safe(i)){endButton.removeEventListener("click",solveGame);
+            toggleInputColor(i,1);
+            if(!safe(i)){notWrong=1;
             endButton.textContent="Wrong Input. Refresh page to try again.";}
             // console.log(safe(clickIndex));
             // console.log(game);
         }
         else if(e.keyCode==8 || e.keyCode==48 || e.keyCode==32){
+            toggleInputColor(i,0);
             s[i].textContent="";
             game[i]=0;
         }
@@ -217,6 +228,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     //function to solve board
     function solveGame(){
+        if(notWrong==1){return;}
+        endButton.textContent="Solving";
+        if(clickIndex!=null){s[clickIndex].classList.remove("yellow");clickIndex=null;}
         let timelimit=60;
         let count=0;
         // halfComplete();
@@ -250,7 +264,14 @@ document.addEventListener('DOMContentLoaded',()=>{
         let end=Date.now()
         console.log("Time: "+(end*1000000-t*1000000)/1000000000+"seconds");
         console.log("Time: "+(end*1000000-start*1000000)/1000000000+"seconds");
-        updateBoard();
+        let fill=0;
+        orderForDisplay=order.slice();
+        orderForDisplay.sort(()=>{return Math.random()-0.5;});
+        timedUpdateInterval=setInterval(()=>{
+            if(fill==order.length){clearInterval(timedUpdateInterval);}
+            if(fill<order.length){s[orderForDisplay[fill]].textContent=game[orderForDisplay[fill]]};
+            fill+=1;},10);
+
         endButton.textContent="Solved";
         // console.log(game);
     }
