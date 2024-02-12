@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         game[order[ci]]=1;
         let start=Date.now()
         let t=Date.now()
-        while(game.includes(0)){
+        while(game.includes(0) || !safe(order[order.length-1])){
             let nowt=Date.now();
             if(nowt-t>70){
                 console.log("hello");
