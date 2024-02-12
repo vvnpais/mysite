@@ -6,8 +6,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     const numpad=document.querySelectorAll('.numpad div');
     gameButton.classList.add("selectedButton");
     let clickIndex=null;
+    let available=Array(81).fill(0);
     let game=Array(81).fill(0);
     let order=[];
+    let randomisation=0.1;
 
     //move higlight through touchpad and click
     for(let i=0;i<81;i++){
@@ -32,6 +34,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     //solverButton
     solverButton.addEventListener("click",()=>{
         type="solver";
+        randomisation=0.1;
         gameButton.classList.remove("selectedButton");
         solverButton.classList.add("selectedButton");
         endButton.textContent="Solve";
@@ -41,6 +44,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     //gameButton
     gameButton.addEventListener("click",()=>{
         type="game";
+        randomisation=0.5;
         solverButton.classList.remove("selectedButton");
         gameButton.classList.add("selectedButton");
         endButton.textContent="Check";
@@ -48,7 +52,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
 
     //endButton
-    endButton.addEventListener("click",solveGame);
+    endButton.addEventListener("click",()=>{endButton.textContent="Solving";solveGame();});
     
     //move highlight with keyboard
     document.addEventListener("keydown",(e)=>{moveHighlight(e)});
@@ -128,12 +132,37 @@ document.addEventListener('DOMContentLoaded',()=>{
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     }
 
+    function updateAvailable(index){
+        let count=0;
+        if(game[index]==0){
+            let availableArray=Array(10).fill(1);
+            for(let i=Math.floor(index/9)*9;i<Math.floor(index/9)*9+9;i++){
+                availableArray[game[i]]=0;
+            }
+            for(let i=index%9;i<(index%9)+81;i=i+9){
+                availableArray[game[i]]=0;
+            }
+            let x=Math.floor((index%9)/3)*3+1;
+            let y=Math.floor(Math.floor(index/9)/3)*3+1;
+            for( let i=x-1 ; i<x+2 ; i++ ){
+                for( let j=y-1 ; j<y+2 ; j++ ){
+                    availableArray[game[j*9+i]]=0;
+                }
+            }
+            for(let i=1;i<10;i++){
+                if(availableArray[i]==1){count+=1;}
+            }
+        }
+        return count;
+    }
+
     //creates array of index of empty cells and shuffles array
     function createOrder(){
         order=[];
         for(let i=0;i<81;i++){if(game[i]==0){order.push(i);}}
-        order.sort( () => (Math.random()-0.5) );
-        // console.log("order",order);
+        order.sort( (a,b) => (updateAvailable(a)-updateAvailable(b)) );
+        order.sort( ()=>{return Math.random() - randomisation ;} )
+        console.log("order",order);
     }
 
     //input from numpad on screen
@@ -188,6 +217,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     //function to solve board
     function solveGame(){
+        let timelimit=60;
+        let count=0;
         // halfComplete();
         let gameCopy=game.slice();
         createOrder();
@@ -197,13 +228,15 @@ document.addEventListener('DOMContentLoaded',()=>{
         let t=Date.now()
         while(game.includes(0) || !safe(order[order.length-1])){
             let nowt=Date.now();
-            if(nowt-t>70){
-                console.log("hello");
+            if(nowt-t>timelimit){
+                // console.log("hello");
                 game=gameCopy.slice();
                 createOrder();
                 ci=0;
                 game[order[ci]]=1;
                 t=Date.now()
+                count+=1;
+                if(timelimit<500){if(count>5){timelimit+=1; count=0;}}
             }
             if(!safe(order[ci])){
                 while(game[order[ci]]==9){
@@ -216,7 +249,9 @@ document.addEventListener('DOMContentLoaded',()=>{
         }
         let end=Date.now()
         console.log("Time: "+(end*1000000-t*1000000)/1000000000+"seconds");
+        console.log("Time: "+(end*1000000-start*1000000)/1000000000+"seconds");
         updateBoard();
+        endButton.textContent="Solved";
         // console.log(game);
     }
     
