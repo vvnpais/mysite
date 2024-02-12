@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     gameButton.classList.add("selectedButton");
     let clickIndex=null;
     let game=Array(81).fill(0);
+    let order=[];
 
     //move higlight through touchpad and click
     for(let i=0;i<81;i++){
@@ -17,7 +18,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
    
     //keyboard control
-    document.addEventListener('keydown',(e)=>{takeInput(clickIndex,e)});
+    document.addEventListener('keydown',(e)=>{
+        takeInput(clickIndex,e);
+    });
     
     let type="game";
 
@@ -125,7 +128,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         order=[];
         for(let i=0;i<81;i++){if(game[i]==0){order.push(i);}}
         order.sort( () => (Math.random()-0.5) );
-        console.log(order);
+        // console.log("order",order);
     }
 
     //input from keyboard for game board
@@ -133,19 +136,65 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(inputs.includes(e.code)){
             s[i].textContent=Number(e.key);
             game[i]=Number(e.key);
+            console.log(safe(clickIndex));
+            // console.log(game);
         }
         else if(e.keyCode==8 || e.keyCode==48 || e.keyCode==32){
             s[i].textContent="";
             game[i]=0;
         }
-        console.log(game);
+    }
+
+    function safe(index){
+        for(let i=Math.floor(index/9)*9;i<Math.floor(index/9)*9+9;i++){
+            if(game[i]==game[index] && (game[index]!=0) && i!=index){return false;}
+        }
+        for(let i=index%9;i<(index%9)+81;i=i+9){
+            if(game[i]==game[index] && (game[index]!=0) && i!=index){return false;}
+        }
+        let x=Math.floor((index%9)/3)*3+1;
+        let y=Math.floor(Math.floor(index/9)/3)*3+1;
+        for( let i=x-1 ; i<x+2 ; i++ ){
+            for( let j=y-1 ; j<y+2 ; j++ ){
+                if(j*9+i==index){continue;}
+                else{if(game[j*9+i]==game[index] && game[index]!=0){return false;}}
+            }
+        }
+        return true;
     }
 
     //function to solve board
     function solveGame(){
-        halfComplete();
+        // halfComplete();
+        let gameCopy=game.slice();
         createOrder();
-        console.log(game);
+        let ci=0;
+        game[order[ci]]=1;
+        let start=Date.now()
+        let t=Date.now()
+        while(game.includes(0)){
+            let nowt=Date.now();
+            if(nowt-t>40){
+                console.log("hello");
+                game=gameCopy.slice();
+                createOrder();
+                ci=0;
+                game[order[ci]]=1;
+                t=Date.now()
+            }
+            if(!safe(order[ci])){
+                while(game[order[ci]]==9){
+                    game[order[ci]]=0;
+                    ci-=1;
+                }
+                game[order[ci]]+=1;
+            }
+            else{ci+=1; game[order[ci]]=1;}
+        }
+        let end=Date.now()
+        console.log("Time: "+(end*1000000-t*1000000)/1000000000+"seconds");
+        updateBoard();
+        // console.log(game);
     }
     
 })
