@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     const gameButton=document.getElementById("gameButton");
     const solverButton=document.getElementById("solverButton");
     const endButton=document.getElementById("endButton");
+    const numpad=document.querySelectorAll('.numpad div');
     gameButton.classList.add("selectedButton");
     let clickIndex=null;
     let game=Array(81).fill(0);
@@ -21,6 +22,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.addEventListener('keydown',(e)=>{
         takeInput(clickIndex,e);
     });
+
+    for(let i=0;i<10;i++){
+        numpad[i].addEventListener("click",()=>{takeInputFromNumpad(clickIndex,i);});
+    }
     
     let type="game";
 
@@ -131,12 +136,30 @@ document.addEventListener('DOMContentLoaded',()=>{
         // console.log("order",order);
     }
 
+    //input from numpad on screen
+    function takeInputFromNumpad(i,e){
+        if(e!=0){
+            s[i].textContent=Number(e);
+            game[i]=Number(e);
+            // console.log(safe(clickIndex));
+            // console.log(game);
+            if(!safe(i)){endButton.removeEventListener("click",solveGame); 
+            endButton.textContent="Wrong Input. Refresh page to try again.";}
+        }
+        else{
+            s[i].textContent="";
+            game[i]=0;
+        }
+    }
+    
     //input from keyboard for game board
     function takeInput(i,e){
         if(inputs.includes(e.code)){
             s[i].textContent=Number(e.key);
             game[i]=Number(e.key);
-            console.log(safe(clickIndex));
+            if(!safe(i)){endButton.removeEventListener("click",solveGame);
+            endButton.textContent="Wrong Input. Refresh page to try again.";}
+            // console.log(safe(clickIndex));
             // console.log(game);
         }
         else if(e.keyCode==8 || e.keyCode==48 || e.keyCode==32){
@@ -174,7 +197,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         let t=Date.now()
         while(game.includes(0)){
             let nowt=Date.now();
-            if(nowt-t>40){
+            if(nowt-t>70){
                 console.log("hello");
                 game=gameCopy.slice();
                 createOrder();

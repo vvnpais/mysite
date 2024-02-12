@@ -25,10 +25,32 @@ body{
     display: inline-block;
     margin: 0 ;
     margin-top: 1rem;
-    width: 20rem;
+    width: 40rem;
     font-size: 1.75rem;
     border: 1px black solid;
     background-color: antiquewhite;
+}
+.grid_numpad{
+    display: inline-flex;
+    flex-wrap: wrap;
+    width: 825px;
+    /* border: 1px solid black; */
+}
+.numpad{
+    display: inline-flex;
+    flex-wrap: wrap;
+    border: 1px solid black;
+    width: 92px;
+    height: 710px;
+    margin-left: 1rem;
+    text-align: center;
+}
+.numpad div{
+    border: 1px solid black;
+    background-color: lightcyan;
+    width: 90px;
+    height: 69px;
+    font-size: 4rem;
 }
 .grid{
     padding: 0;
