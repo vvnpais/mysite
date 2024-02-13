@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     let timedUpdateInterval=null;
     let orderForDisplay=null;
     let notWrong=0;
+    let maxCount=3;
 
     //move higlight through touchpad and click
     for(let i=0;i<81;i++){
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
 
     //endButton
-    endButton.addEventListener("click",()=>{solveGame();});
+    endButton.addEventListener("click",()=>{if(notWrong==0){endButton.textContent="Solving";}; setTimeout(solveGame,10);});
     
     //move highlight with keyboard
     document.addEventListener("keydown",(e)=>{moveHighlight(e)});
@@ -229,10 +230,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     //function to solve board
     function solveGame(){
         if(notWrong==1){return;}
-        endButton.textContent="Solving";
         if(clickIndex!=null){s[clickIndex].classList.remove("yellow");clickIndex=null;}
-        let timelimit=60;
+        let timelimit=30;
         let count=0;
+        let unsolvable=0;
         // halfComplete();
         let gameCopy=game.slice();
         createOrder();
@@ -243,14 +244,22 @@ document.addEventListener('DOMContentLoaded',()=>{
         while(game.includes(0) || !safe(order[order.length-1])){
             let nowt=Date.now();
             if(nowt-t>timelimit){
-                // console.log("hello");
+                console.log(maxCount);
                 game=gameCopy.slice();
                 createOrder();
                 ci=0;
                 game[order[ci]]=1;
                 t=Date.now()
                 count+=1;
-                if(timelimit<500){if(count>5){timelimit+=1; count=0;}}
+                if(timelimit<200){
+                    if(count>maxCount){
+                        timelimit+=1;
+                        if(timelimit==50 || timelimit==70){maxCount-=1;}  
+                        count=0;
+                    }
+                }
+                else if(timelimit==200){unsolvable=1; break;}
+                // if(randomisation<0.49){randomisation+=0.01;}
             }
             if(!safe(order[ci])){
                 while(game[order[ci]]==9){
@@ -261,6 +270,7 @@ document.addEventListener('DOMContentLoaded',()=>{
             }
             else{ci+=1; game[order[ci]]=1;}
         }
+        if(unsolvable==1){endButton.textContent="Unsolvable"; return;}
         let end=Date.now()
         console.log("Time: "+(end*1000000-t*1000000)/1000000000+"seconds");
         console.log("Time: "+(end*1000000-start*1000000)/1000000000+"seconds");
@@ -268,9 +278,12 @@ document.addEventListener('DOMContentLoaded',()=>{
         orderForDisplay=order.slice();
         orderForDisplay.sort(()=>{return Math.random()-0.5;});
         timedUpdateInterval=setInterval(()=>{
-            if(fill==order.length){clearInterval(timedUpdateInterval);}
+            if(fill>=order.length){clearInterval(timedUpdateInterval);}
             if(fill<order.length){s[orderForDisplay[fill]].textContent=game[orderForDisplay[fill]]};
-            fill+=1;},10);
+            if(fill+1<order.length){s[orderForDisplay[fill+1]].textContent=game[orderForDisplay[fill+1]]};
+            if(fill+2<order.length){s[orderForDisplay[fill+2]].textContent=game[orderForDisplay[fill+2]]};
+            fill+=3;}
+        ,25);
 
         endButton.textContent="Solved";
         // console.log(game);
